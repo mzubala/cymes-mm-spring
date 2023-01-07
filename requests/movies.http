@@ -1,0 +1,96 @@
+POST http://localhost:8080/genres
+Content-Type: application/json
+
+{
+  "name": "Dramat"
+}
+
+###
+
+POST http://localhost:8080/genres
+Content-Type: application/json
+
+{
+  "name": "Gangsterski"
+}
+
+
+###
+
+PUT http://localhost:8080/genres/1
+Content-Type: application/json
+
+{
+  "name": "Sensacja"
+}
+
+###
+
+GET http://localhost:8080/genres
+Content-Type: application/json
+
+###
+
+POST http://localhost:8080/stars
+Content-Type: application/json
+
+{
+  "firstName": "Robert",
+  "lastName": "Deniro"
+}
+
+###
+
+POST http://localhost:8080/stars
+Content-Type: application/json
+
+{
+  "firstName": "Martin",
+  "lastName": "Scorsese"
+}
+
+###
+
+PUT http://localhost:8080/stars/1
+Content-Type: application/json
+
+{
+  "firstName": "Robert",
+  "lastName": "Deniro"
+}
+
+###
+
+GET http://localhost:8080/stars?phrase=Johnny
+Content-Type: application/json
+
+###
+
+POST http://localhost:8080/movies
+Content-Type: application/json
+
+{
+  "title": "The Godfellas",
+  "description": "Kilkunastoletni Henry i Tommy DeVito trafiają pod opiekę potężnego gangstera. Obaj szybko uczą się panujących w mafii reguł.",
+  "genreIds": [1, 2],
+  "actorIds": [1],
+  "directorId": 2
+}
+
+###
+
+PUT http://localhost:8080/movies/1
+Content-Type: application/json
+
+{
+  "title": "The Godfellas",
+  "description": "Kilkunastoletni Henry i Tommy DeVito trafiają pod opiekę potężnego gangstera. Obaj szybko uczą się panujących w mafii reguł.",
+  "genreIds": [1, 2],
+  "actorIds": [1],
+  "directorId": 2
+}
+
+###
+
+GET http://localhost:8080/movies?phrase=fellas
+Content-Type: application/json
