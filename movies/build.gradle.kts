@@ -1,7 +1,3 @@
 plugins {
     `app-module`
 }
-
-dependencies {
-
-}
