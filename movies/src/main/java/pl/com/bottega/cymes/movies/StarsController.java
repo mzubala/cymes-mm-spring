@@ -1,9 +1,12 @@
 package pl.com.bottega.cymes.movies;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,25 +19,36 @@ import pl.com.bottega.cymes.movies.dto.StarDto;
 import pl.com.bottega.cymes.movies.requests.CreateStarRequest;
 import pl.com.bottega.cymes.movies.requests.UpdateStarRequest;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/stars")
+@RequiredArgsConstructor
 @Log
 class StarsController {
 
+    private final StarRepository starRepository;
+
     @PostMapping
     void create(@RequestBody CreateStarRequest request) {
-        log.info(String.format("Create star %s", request));
+        starRepository.save(new Star(null, request.firstName(), request.middleName(), request.lastName()));
     }
 
     @PutMapping("/{id}")
+    @Transactional
     void update(@PathVariable Long id, @RequestBody UpdateStarRequest request) {
-        log.info(String.format("Update star %d %s", id, request));
+        var star = starRepository.getReferenceById(id);
+        star.setFirstName(request.firstName());
+        star.setLastName(request.lastName());
+        star.setMiddleName(request.middleName());
     }
 
     @GetMapping
     Page<StarDto> search(@RequestParam String phrase, Pageable pagination) {
-        return new PageImpl(List.of(new StarDto(1L, "Johnny", "Depp")), pagination, 1);
+        var paginationWithSort = PageRequest.of(
+            pagination.getPageNumber(),
+            pagination.getPageSize(),
+            pagination.getSortOr(Sort.by(Star_.LAST_NAME))
+        );
+        return starRepository.findAll(StarSpecifications.byPhrase(phrase), paginationWithSort)
+            .map(Star::toDto);
     }
 }

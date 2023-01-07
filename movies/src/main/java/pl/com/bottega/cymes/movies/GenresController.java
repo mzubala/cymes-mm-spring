@@ -1,6 +1,9 @@
 package pl.com.bottega.cymes.movies;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
+import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,27 +16,39 @@ import pl.com.bottega.cymes.movies.requests.CreateGenreRequest;
 import pl.com.bottega.cymes.movies.requests.UpdateGenreRequest;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/genres")
+@RequiredArgsConstructor
 @Log
 class GenresController {
+
+    private final GenreRepository genreRepository;
+
     @PostMapping
     void create(@RequestBody CreateGenreRequest request) {
-        log.info(String.format("Create genre %s", request));
+        genreRepository.save(new Genre(
+            null,
+            request.name()
+        ));
     }
 
     @PutMapping
     @RequestMapping("/{genreId}")
-    void update(@PathVariable Long genreId, UpdateGenreRequest request) {
-        log.info(String.format("Update genre %d %s", genreId, request));
+    @Transactional
+    public void update(@PathVariable Long genreId, UpdateGenreRequest request) {
+        var genre = genreRepository.getReferenceById(genreId);
+        genre.setName(request.name());
+        genreRepository.save(genre);
     }
 
     @GetMapping
     List<GenreDto> getAll() {
-        return List.of(
-            new GenreDto(1L, "Komedia"),
-            new GenreDto(2L, "Akcja")
-        );
+        return genreRepository.findAll(Sort.by("name")).stream()
+            .map(Genre::toDto)
+            .collect(toList());
     }
 }

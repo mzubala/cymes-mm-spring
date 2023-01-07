@@ -1,4 +1,4 @@
 #!/bin/bash
 
-./gradlew build
+./gradlew build &&
 docker-compose up --build --remove-orphans

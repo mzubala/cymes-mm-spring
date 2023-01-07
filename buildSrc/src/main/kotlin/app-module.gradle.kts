@@ -23,6 +23,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.1.5.Final")
     implementation("org.postgresql:postgresql")
     implementation("com.google.guava:guava:31.1-jre")
 }
