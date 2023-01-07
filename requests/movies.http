@@ -61,7 +61,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8080/stars?phrase=Johnny
+GET http://localhost:8080/stars?phrase=n&page=0&size=5
 Content-Type: application/json
 
 ###

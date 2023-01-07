@@ -38,12 +38,16 @@ class MoviesController {
     @GetMapping
     Page<MovieDto> search(@RequestParam String phrase, Pageable pageable) {
         return new PageImpl<>(
-            List.of(new MovieDto(1L,
-                "The Godfellas",
-                "XXX",
-                Set.of(new GenreDto(1L, "Dramat")),
-                new StarDto(1L, "Martin", "Scorsese"),
-                Set.of(new StarDto(2L, "Robert", "Deniro")))
+            List.of(
+                new MovieDto(
+                    1L,
+                    "The Godfellas",
+                    "XXX",
+                    Set.of(new GenreDto(1L, "Dramat")),
+                    new StarDto(1L, "Martin", null, "Scorsese"),
+                    List.of(new StarDto(2L, "Robert", null, "Deniro")),
+                    60
+                )
             ),
             pageable,
             1L
