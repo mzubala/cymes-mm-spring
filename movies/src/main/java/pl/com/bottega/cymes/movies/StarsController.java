@@ -35,6 +35,6 @@ class StarsController {
 
     @GetMapping
     Page<StarDto> search(@RequestParam String phrase, Pageable pagination) {
-        return new PageImpl(List.of(new StarDto(1L, "Johnny", "Depp")), pagination, 1);
+        return new PageImpl(List.of(new StarDto(1L, "Johnny", null, "Depp")), pagination, 1);
     }
 }
