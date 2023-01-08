@@ -1,5 +1,6 @@
 package pl.com.bottega.cymes.movies;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.data.domain.Sort;
@@ -16,7 +17,6 @@ import pl.com.bottega.cymes.movies.requests.CreateGenreRequest;
 import pl.com.bottega.cymes.movies.requests.UpdateGenreRequest;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -29,7 +29,7 @@ class GenresController {
     private final GenreRepository genreRepository;
 
     @PostMapping
-    void create(@RequestBody CreateGenreRequest request) {
+    void create(@Valid @RequestBody CreateGenreRequest request) {
         genreRepository.save(new Genre(
             null,
             request.name()
@@ -39,7 +39,7 @@ class GenresController {
     @PutMapping
     @RequestMapping("/{genreId}")
     @Transactional
-    public void update(@PathVariable Long genreId, UpdateGenreRequest request) {
+    public void update(@PathVariable Long genreId, @RequestBody @Valid UpdateGenreRequest request) {
         var genre = genreRepository.getReferenceById(genreId);
         genre.setName(request.name());
         genreRepository.save(genre);

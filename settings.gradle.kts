@@ -9,3 +9,5 @@ include("reservations")
 include("notifications")
 include("tickets-generation")
 include("user")
+include("commons:commons-rest")
+findProject(":commons:commons-rest")?.name = "commons-rest"

@@ -11,6 +11,15 @@ POST http://localhost:8080/genres
 Content-Type: application/json
 
 {
+  "name": null
+}
+
+###
+
+POST http://localhost:8080/genres
+Content-Type: application/json
+
+{
   "name": "Gangsterski"
 }
 

@@ -11,4 +11,5 @@ tasks.named<BootJar>("bootJar") {
 dependencies {
     implementation(project(":cinemas"))
     implementation(project(":movies"))
+    implementation(project(":commons:commons-rest"))
 }

@@ -1,5 +1,6 @@
 package pl.com.bottega.cymes.movies;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
@@ -34,7 +35,7 @@ class MoviesController {
 
     @PostMapping
     @Transactional
-    void create(@RequestBody CreateMovieRequest request) {
+    void create(@RequestBody @Valid CreateMovieRequest request) {
         movieRepository.save(
             new Movie(
                  null,
@@ -50,7 +51,7 @@ class MoviesController {
 
     @PutMapping("/{id}")
     @Transactional
-    void update(@PathVariable Long id, @RequestBody UpdateMovieRequest request) {
+    void update(@PathVariable Long id, @RequestBody @Valid UpdateMovieRequest request) {
         var movie = movieRepository.getReferenceById(id);
         movie.setTitle(request.title());
         movie.setDescription(request.description());

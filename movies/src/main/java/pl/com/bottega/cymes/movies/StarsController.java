@@ -1,5 +1,6 @@
 package pl.com.bottega.cymes.movies;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.data.domain.Page;
@@ -23,18 +24,19 @@ import pl.com.bottega.cymes.movies.requests.UpdateStarRequest;
 @RequestMapping("/stars")
 @RequiredArgsConstructor
 @Log
+@Valid
 class StarsController {
 
     private final StarRepository starRepository;
 
     @PostMapping
-    void create(@RequestBody CreateStarRequest request) {
+    void create(@RequestBody @Valid CreateStarRequest request) {
         starRepository.save(new Star(null, request.firstName(), request.middleName(), request.lastName()));
     }
 
     @PutMapping("/{id}")
     @Transactional
-    void update(@PathVariable Long id, @RequestBody UpdateStarRequest request) {
+    void update(@PathVariable Long id, @RequestBody @Valid UpdateStarRequest request) {
         var star = starRepository.getReferenceById(id);
         star.setFirstName(request.firstName());
         star.setLastName(request.lastName());
