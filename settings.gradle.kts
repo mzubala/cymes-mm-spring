@@ -11,3 +11,5 @@ include("tickets-generation")
 include("user")
 include("commons:commons-rest")
 findProject(":commons:commons-rest")?.name = "commons-rest"
+include("commons:commons-test")
+findProject(":commons:commons-test")?.name = "commons-test"

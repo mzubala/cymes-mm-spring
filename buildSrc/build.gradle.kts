@@ -10,6 +10,9 @@ dependencies {
     implementation("io.freefair.gradle:lombok-plugin:6.6")
 }
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
 
 repositories {
     mavenCentral()

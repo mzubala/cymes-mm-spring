@@ -9,4 +9,7 @@ public record DetailedCinemaInfoDto(
     List<BasicCinemaHallInfoDto> halls,
     Boolean suspended
 ) {
+    public BasicCinemaHallInfoDto getHall(String name) {
+        return halls.stream().filter(hall -> hall.name().equals(name)).findFirst().orElseThrow(IllegalArgumentException::new);
+    }
 }

@@ -44,7 +44,7 @@ class StarsController {
     }
 
     @GetMapping
-    Page<StarDto> search(@RequestParam String phrase, Pageable pagination) {
+    Page<StarDto> search(@RequestParam(required = false) String phrase, Pageable pagination) {
         var paginationWithSort = PageRequest.of(
             pagination.getPageNumber(),
             pagination.getPageSize(),

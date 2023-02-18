@@ -9,7 +9,7 @@ class MovieSpecifications {
                 return null;
             } else {
                 var likeExpr = "%" + phrase.toLowerCase() + "%";
-                return criteriaBuilder.like(root.get(Movie_.title), likeExpr);
+                return criteriaBuilder.like(criteriaBuilder.lower(root.get(Movie_.title)), likeExpr);
             }
         };
     }
