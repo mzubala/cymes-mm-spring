@@ -1,22 +1,31 @@
 package pl.com.bottega.cymes.movies;
 
-import org.springframework.lang.NonNull;
+import com.google.common.collect.Iterables;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
+@RequiredArgsConstructor
 public class MoviesFacade {
 
-    MovieDto getMovie(Long movieId) {
-        // TODO
-        return null;
+    private final MovieRepository movieRepository;
+
+    public MovieDto getMovie(Long movieId) {
+        return movieRepository.findById(movieId, MovieDto.class).orElseThrow(EntityNotFoundException::new);
     }
 
-    List<MovieDto> getMovies(Iterable<Long> ids) {
-        // TODO
-        return List.of();
+    public List<MovieDto> getMovies(Iterable<Long> ids) {
+        var movies = movieRepository.findByIdIn(ids, MovieDto.class);
+        if(movies.size() != Iterables.size(ids)) {
+            throw new EntityNotFoundException("At least one movie id is invalid");
+        }
+        return movies;
     }
 
-    public record MovieDto(Long movieId, String title, Integer durationMinutes) {
+    public record MovieDto(Long id, String title, Integer durationMinutes) {
 
     }
 

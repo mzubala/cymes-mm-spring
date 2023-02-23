@@ -60,7 +60,7 @@ class ShowSchedulerTest {
 
         // then
         assertSuccess(scheduleResponses);
-        assertThat(readShowsInLublin).usingRecursiveFieldByFieldElementComparatorIgnoringFields("shows.id")
+        assertThat(readShowsInLublin).usingRecursiveFieldByFieldElementComparatorIgnoringFields("shows.showId")
             .containsExactly(
                 new ShowsGroupDto(
                     new ShowsGroupDto.MovieDto(moviesFixtures.batmanId, "Batman"),
@@ -71,7 +71,7 @@ class ShowSchedulerTest {
                     List.of(new ShowsGroupDto.ShowDto(2L, LocalTime.parse("15:00")))
                 )
             );
-        assertThat(readShowsInWroclaw).usingRecursiveFieldByFieldElementComparatorIgnoringFields("shows.id")
+        assertThat(readShowsInWroclaw).usingRecursiveFieldByFieldElementComparatorIgnoringFields("shows.showId")
             .containsExactly(
                 new ShowsGroupDto(
                     new ShowsGroupDto.MovieDto(moviesFixtures.batmanId, "Batman"),
