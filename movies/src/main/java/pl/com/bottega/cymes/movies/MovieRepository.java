@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.lang.Nullable;
 
+import java.util.List;
+import java.util.Optional;
+
 import static pl.com.bottega.cymes.movies.Movie_.ACTORS;
 import static pl.com.bottega.cymes.movies.Movie_.DIRECTOR;
 import static pl.com.bottega.cymes.movies.Movie_.GENRES;
@@ -15,4 +18,8 @@ import static pl.com.bottega.cymes.movies.Movie_.GENRES;
 interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecificationExecutor<Movie> {
     @EntityGraph(attributePaths = {ACTORS, GENRES, DIRECTOR})
     Page<Movie> findAll(@Nullable Specification<Movie> spec, Pageable pageable);
+
+    <T> Optional<T> findById(Long movieId, Class<T> projection);
+
+    <T> List<T> findByIdIn(Iterable<Long> ids, Class<T> projection);
 }

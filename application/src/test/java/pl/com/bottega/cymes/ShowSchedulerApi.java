@@ -22,6 +22,6 @@ class ShowSchedulerApi extends Api {
     }
 
     List<ShowsGroupDto> getShows(Long cinemaId, LocalDate when) {
-        return getList("/shows/{cinemaId}?at={when}", ShowsGroupDto.class, cinemaId, when);
+        return getList("/shows?cinemaId={cinemaId}&when={when}", ShowsGroupDto.class, cinemaId, when);
     }
 }
