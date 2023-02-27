@@ -1,11 +1,18 @@
 package pl.com.bottega.cymes.showscheduler;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pl.com.bottega.cymes.cinemas.CinemasFacade;
+import pl.com.bottega.cymes.commons.application.Audited;
 import pl.com.bottega.cymes.movies.MoviesFacade;
 import pl.com.bottega.cymes.movies.MoviesFacade.MovieDto;
+import pl.com.bottega.cymes.sharedkernel.UserCommand;
 import pl.com.bottega.cymes.showscheduler.dto.ShowsGroupDto;
 import pl.com.bottega.cymes.showscheduler.dto.ShowsGroupDto.ShowDto;
 
@@ -28,22 +35,23 @@ class ShowsService {
     private final MoviesFacade moviesFacade;
 
     @Transactional
+    @Audited
     void schedule(ScheduleShowCommand command) {
-        var movie = moviesFacade.getMovie(command.movieId());
+        var movie = moviesFacade.getMovie(command.getMovieId());
         var show = new Show(
-            command.movieId(),
-            command.cinemaId(),
-            command.cinemaHallId(),
-            command.when(),
-            command.when().plus(movie.durationMinutes(), ChronoUnit.MINUTES)
+            command.getMovieId(),
+            command.getCinemaId(),
+            command.getCinemaHallId(),
+            command.getWhen(),
+            command.getWhen().plus(movie.durationMinutes(), ChronoUnit.MINUTES)
         );
-        if (cinemasFacade.isCinemaSuspended(command.cinemaId(), show.getFrom(), show.getUntil())) {
+        if (cinemasFacade.isCinemaSuspended(command.getCinemaId(), show.getFrom(), show.getUntil())) {
             throw new CinemaHallNotAvailableException("Cinema is suspended at the selected time");
         }
-        if (cinemasFacade.isCinemaHallSuspended(command.cinemaHallId(), show.getFrom(), show.getUntil())) {
+        if (cinemasFacade.isCinemaHallSuspended(command.getCinemaHallId(), show.getFrom(), show.getUntil())) {
             throw new CinemaHallNotAvailableException("Cinema hall is suspended at the selected time");
         }
-        if (showRepository.collidingShowsPresent(show.getFrom(), show.getUntil(), command.cinemaId(), command.cinemaHallId())) {
+        if (showRepository.collidingShowsPresent(show.getFrom(), show.getUntil(), command.getCinemaId(), command.getCinemaHallId())) {
             throw new CinemaHallNotAvailableException("Another show has been scheduled in this cinema and cinema hall at the colliding time");
         }
         showRepository.save(show);
@@ -79,10 +87,13 @@ class ShowsService {
     }
 }
 
-record ScheduleShowCommand(
-    Long cinemaId,
-    Long cinemaHallId,
-    Long movieId,
-    Instant when
-) {
+@Data
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
+class ScheduleShowCommand extends UserCommand {
+    Long cinemaId;
+    Long cinemaHallId;
+    Long movieId;
+    Instant when;
 }
