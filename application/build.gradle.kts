@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":movies"))
     implementation(project(":show-scheduler"))
     implementation(project(":commons:commons-rest"))
+    implementation(project(":commons:commons-configuration"))
 
     testImplementation(project(":commons:commons-test"))
 }

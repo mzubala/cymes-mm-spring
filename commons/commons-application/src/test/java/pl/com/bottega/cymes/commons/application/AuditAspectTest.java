@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pl.com.bottega.cymes.commons.test.Faker;
@@ -19,9 +18,7 @@ import pl.com.bottega.cymes.sharedkernel.UserCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 @IntegrationTest
-@SpringBootApplication
 class AuditAspectTest {
 
     @Autowired
@@ -39,9 +36,11 @@ class AuditAspectTest {
     @Autowired
     private GloballyAuditedBean globallyAuditedBean;
 
-
     @Autowired
     private LocallyAuditedBean locallyAuditedBean;
+
+    @Autowired
+    private NonTxBean nonTxBean;
 
     @Test
     void savesAuditAfterSuccessfulCommandExecution() {
@@ -58,11 +57,61 @@ class AuditAspectTest {
         assertCommandPersisted(cmd2);
     }
 
+    @Test
+    void doesNotSaveCommandWhenOtherTypesOfMethodsAreCalled() {
+        // when
+        globallyAuditedBean.getSome();
+        globallyAuditedBean.doNonUserWork(new NonUserCommand());
+
+        // then
+        assertNoCommandsPersisted();
+    }
+
+    @Test
+    void savesCommandWhenNonTransactionalMethodIsCalled() {
+        // given
+        var cmd = new TestCommand();
+
+        // when
+        nonTxBean.doWork(cmd);
+
+        // then
+        assertCommandPersisted(cmd);
+    }
+
+    @Test
+    void savesCommandsPassedToLocallyAuditedMethods() {
+        // given
+        var cmd = new TestCommand();
+
+        // when
+        locallyAuditedBean.doWork(cmd);
+
+        // then
+        assertCommandPersisted(cmd);
+    }
+
+    @Test
+    void doesNotSaveCommandIfAuditedMethodFals() {
+        // given
+        var cmd = new TestCommand();
+
+        // when
+        try {
+            globallyAuditedBean.doFailingWork(cmd);
+        } catch (Exception ignored) {
+
+        }
+
+
+        // then
+        assertNoCommandsPersisted();
+    }
+
     @SneakyThrows
     private void assertCommandPersisted(UserCommand cmd) {
         assertThat(persistentCommandRepository.findAll()).usingRecursiveFieldByFieldElementComparatorIgnoringFields("id").contains(
             new PersistentCommand(
-                1L,
                 cmd.getUserId(),
                 objectMapper.writeValueAsString(cmd),
                 cmd.getClass().getName(),
@@ -71,50 +120,74 @@ class AuditAspectTest {
         );
     }
 
-    @Component
+    private void assertNoCommandsPersisted() {
+        assertThat(persistentCommandRepository.count()).isEqualTo(0L);
+    }
+}
+
+@Component
+@Audited
+@Transactional
+class GloballyAuditedBean {
+
+    void doWork(TestCommand command) {
+
+    }
+
+    void doOtherWork(OtherTestCommand command) {
+
+    }
+
+    @Transactional(readOnly = true)
+    String getSome() {
+        return "text";
+    }
+
+    void doNonUserWork(NonUserCommand nonUserCommand) {
+
+    }
+
+    void doFailingWork(TestCommand cmd) {
+        throw new RuntimeException("Error!");
+    }
+}
+
+@Component
+@Audited
+class NonTxBean {
+
+    void doWork(TestCommand command) {
+
+    }
+}
+
+
+@Component
+@Transactional
+class LocallyAuditedBean {
+
     @Audited
-    @Transactional
-    static class GloballyAuditedBean {
-
-        void doWork(TestCommand command) {
-
-        }
-
-        void doOtherWork(OtherTestCommand command) {
-
-        }
-
-        @Transactional(readOnly = true)
-        String getSome() {
-            return "text";
-        }
+    void doWork(TestCommand command) {
 
     }
+}
 
-    @Component
-    @Transactional
-    static class LocallyAuditedBean {
+@Data
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
+class TestCommand extends UserCommand {
+    Integer number;
+}
 
-    }
+@Data
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
+class OtherTestCommand extends UserCommand {
+    String text;
+}
 
-    @Data
-    @EqualsAndHashCode(callSuper = true)
-    @AllArgsConstructor
-    @NoArgsConstructor
-    static class TestCommand extends UserCommand {
-        Integer number;
-    }
-
-    @Data
-    @EqualsAndHashCode(callSuper = true)
-    @AllArgsConstructor
-    @NoArgsConstructor
-    static class OtherTestCommand extends UserCommand {
-        String text;
-    }
-
-    static class NonUserCommand implements Command {
-
-    }
+class NonUserCommand implements Command {
 
 }
