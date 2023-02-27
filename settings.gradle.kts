@@ -17,3 +17,5 @@ include("commons:commons-application")
 findProject(":commons:commons-application")?.name = "commons-application"
 include("commons:shared-kernel")
 findProject(":commons:shared-kernel")?.name = "shared-kernel"
+include("commons:commons-configuration")
+findProject(":commons:commons-configuration")?.name = "commons-configuration"

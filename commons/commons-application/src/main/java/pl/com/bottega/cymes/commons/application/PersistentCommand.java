@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
-@AllArgsConstructor
 @NoArgsConstructor
 class PersistentCommand {
     private Long id;
@@ -13,4 +12,11 @@ class PersistentCommand {
     private String jsonPayload;
     private String payloadClass;
     private Instant executedAt;
+
+    PersistentCommand(Long userId, String jsonPayload, String payloadClass, Instant executedAt) {
+        this.userId = userId;
+        this.jsonPayload = jsonPayload;
+        this.payloadClass = payloadClass;
+        this.executedAt = executedAt;
+    }
 }
