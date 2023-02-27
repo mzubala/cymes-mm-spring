@@ -13,3 +13,7 @@ include("commons:commons-rest")
 findProject(":commons:commons-rest")?.name = "commons-rest"
 include("commons:commons-test")
 findProject(":commons:commons-test")?.name = "commons-test"
+include("commons:commons-application")
+findProject(":commons:commons-application")?.name = "commons-application"
+include("commons:shared-kernel")
+findProject(":commons:shared-kernel")?.name = "shared-kernel"

@@ -7,5 +7,6 @@ dependencies {
     api("org.junit.jupiter:junit-jupiter:5.8.2")
     api("org.assertj:assertj-core:3.6.1")
     api("org.springframework.boot:spring-boot-starter-test")
+    implementation(project(":commons:shared-kernel"))
     implementation("org.testcontainers:postgresql:1.17.6")
 }
