@@ -17,9 +17,6 @@ import java.util.List;
 @Component
 class MoviesApi extends Api {
 
-    private List<StarDto> stars;
-    private List<GenreDto> genres;
-
     MoviesApi(MockMvc mockMvc, ObjectMapper objectMapper) {
         super(mockMvc, objectMapper);
     }
@@ -39,18 +36,12 @@ class MoviesApi extends Api {
     }
 
     List<GenreDto> getGenres() {
-        if (genres == null) {
-            genres = getList("/genres", GenreDto.class);
-        }
-        return genres;
+        return getList("/genres", GenreDto.class);
     }
 
     @SneakyThrows
     List<StarDto> getStars() {
-        if (stars == null) {
-            stars = getPage("/stars", StarDto.class).getContent();
-        }
-        return stars;
+        return getPage("/stars", StarDto.class).getContent();
     }
 
     Long getGenreId(String name) {

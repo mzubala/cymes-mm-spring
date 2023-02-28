@@ -2,11 +2,6 @@ package pl.com.bottega.cymes.commons.rest;
 
 import java.util.List;
 
-record Errors(List<Error> errors) {
-}
-
-record Error(String field, String message) {
+public record Errors(List<Error> errors) {
 
 }
-
-record GlobalError(String error) {}
