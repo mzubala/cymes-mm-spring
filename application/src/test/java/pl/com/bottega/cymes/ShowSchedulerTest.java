@@ -100,7 +100,7 @@ class ShowSchedulerTest {
 
         // when
         var response = showSchedulerApi.schedule(
-            new ScheduleShowRequest(cinemasFixtures.wroclawMagnoliaId, cinemasFixtures.hall1WroclawMagnoliaIdId, moviesFixtures.batmanId, fixedClockProvider.now().plus(136, ChronoUnit.MINUTES))
+            new ScheduleShowRequest(cinemasFixtures.wroclawMagnoliaId, cinemasFixtures.hall1WroclawMagnoliaIdId, moviesFixtures.batmanId, fixedClockProvider.now().plus(135, ChronoUnit.MINUTES))
         );
 
         // then

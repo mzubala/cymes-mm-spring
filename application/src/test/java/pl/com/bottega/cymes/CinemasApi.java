@@ -11,16 +11,10 @@ import pl.com.bottega.cymes.cinemas.requests.CreateCinemaHallRequest;
 import pl.com.bottega.cymes.cinemas.requests.CreateCinemaRequest;
 
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 class CinemasApi extends Api {
-
-    private List<BasicCinemaInfoDto> cinemas;
-
-    private final Map<Long, DetailedCinemaInfoDto> detailedCinemaInfoDtoMap = new HashMap<>();
 
     CinemasApi(MockMvc mockMvc, ObjectMapper objectMapper) {
         super(mockMvc, objectMapper);
@@ -38,10 +32,7 @@ class CinemasApi extends Api {
 
     @SneakyThrows
     List<BasicCinemaInfoDto> getCinemas() {
-        if (cinemas == null) {
-            cinemas = getList("/cinemas", BasicCinemaInfoDto.class);
-        }
-        return cinemas;
+        return getList("/cinemas", BasicCinemaInfoDto.class);
     }
 
     Long getCinemaId(String city, String name) {
@@ -50,10 +41,7 @@ class CinemasApi extends Api {
     }
 
     DetailedCinemaInfoDto getCinemaDetails(Long cinemaId) {
-        return detailedCinemaInfoDtoMap.computeIfAbsent(
-            cinemaId,
-            (id) -> getObject("/cinemas/{id}?at={at}", DetailedCinemaInfoDto.class, cinemaId.toString(), Instant.now())
-        );
+        return getObject("/cinemas/{id}?at={at}", DetailedCinemaInfoDto.class, cinemaId.toString(), Instant.now());
     }
 }
 

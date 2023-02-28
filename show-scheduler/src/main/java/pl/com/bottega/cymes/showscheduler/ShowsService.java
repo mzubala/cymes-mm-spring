@@ -33,18 +33,13 @@ class ShowsService {
     private final ShowRepository showRepository;
     private final CinemasFacade cinemasFacade;
     private final MoviesFacade moviesFacade;
+    private final ShowSchedulerProperties showSchedulerProperties;
 
     @Transactional
     @Audited
     void schedule(ScheduleShowCommand command) {
         var movie = moviesFacade.getMovie(command.getMovieId());
-        var show = new Show(
-            command.getMovieId(),
-            command.getCinemaId(),
-            command.getCinemaHallId(),
-            command.getWhen(),
-            command.getWhen().plus(movie.durationMinutes(), ChronoUnit.MINUTES)
-        );
+        var show = createNewShow(command, movie);
         if (cinemasFacade.isCinemaSuspended(command.getCinemaId(), show.getFrom(), show.getUntil())) {
             throw new CinemaHallNotAvailableException("Cinema is suspended at the selected time");
         }
@@ -55,6 +50,23 @@ class ShowsService {
             throw new CinemaHallNotAvailableException("Another show has been scheduled in this cinema and cinema hall at the colliding time");
         }
         showRepository.save(show);
+    }
+
+    private Show createNewShow(ScheduleShowCommand command, MovieDto movie) {
+        return new Show(
+            command.getMovieId(),
+            command.getCinemaId(),
+            command.getCinemaHallId(),
+            command.getWhen(),
+            showEndTime(command, movie)
+        );
+    }
+
+    private Instant showEndTime(ScheduleShowCommand command, MovieDto movie) {
+        return command.getWhen()
+            .plus(movie.durationMinutes(), ChronoUnit.MINUTES)
+            .plus(showSchedulerProperties.cinemaHallCleaningTime())
+            .plus(showSchedulerProperties.commercialsDisplayTime());
     }
 
     @Transactional(readOnly = true)
