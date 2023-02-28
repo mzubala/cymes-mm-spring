@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":show-scheduler"))
     implementation(project(":commons:commons-rest"))
     implementation(project(":commons:commons-configuration"))
+    implementation(project(":commons:shared-kernel"))
 
     testImplementation(project(":commons:commons-test"))
 }

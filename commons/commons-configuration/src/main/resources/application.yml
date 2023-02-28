@@ -10,3 +10,7 @@ spring:
     properties:
       hibernate:
         globally_quoted_identifiers: true
+
+show-scheduler:
+  cinema-hall-cleaning-time: PT30M
+  commercials-display-time: PT30M

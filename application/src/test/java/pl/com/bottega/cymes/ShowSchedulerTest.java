@@ -1,17 +1,21 @@
 package pl.com.bottega.cymes;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import pl.com.bottega.cymes.commons.test.FixedClockProvider;
 import pl.com.bottega.cymes.commons.test.IntegrationTest;
 import pl.com.bottega.cymes.commons.test.TimeFixtures;
 import pl.com.bottega.cymes.showscheduler.dto.ShowsGroupDto;
 import pl.com.bottega.cymes.showscheduler.requests.ScheduleShowRequest;
 
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static pl.com.bottega.cymes.commons.test.MockMvcAssertions.assertSuccess;
 
 @IntegrationTest
@@ -29,12 +33,14 @@ class ShowSchedulerTest {
     @Autowired
     private TimeFixtures timeFixtures;
 
+    @Autowired
+    private FixedClockProvider fixedClockProvider;
+
     @BeforeEach
     void setup() {
         cinemasFixtures.create();
         moviesFixtures.create();
     }
-
 
     @Test
     void schedulesAndReadsGroupedShows() {
@@ -83,4 +89,21 @@ class ShowSchedulerTest {
             );
     }
 
+    @Test
+    @SneakyThrows
+    void cannotScheduleTwoCollidingShows() {
+        // given
+        fixedClockProvider.fixAt(timeFixtures.tomorrowAt(10, 0));
+        showSchedulerApi.schedule(
+            new ScheduleShowRequest(cinemasFixtures.wroclawMagnoliaId, cinemasFixtures.hall1WroclawMagnoliaIdId, moviesFixtures.batmanId, fixedClockProvider.now())
+        );
+
+        // when
+        var response = showSchedulerApi.schedule(
+            new ScheduleShowRequest(cinemasFixtures.wroclawMagnoliaId, cinemasFixtures.hall1WroclawMagnoliaIdId, moviesFixtures.batmanId, fixedClockProvider.now().plus(136, ChronoUnit.MINUTES))
+        );
+
+        // then
+        response.andExpect(status().isConflict());
+    }
 }
