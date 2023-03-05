@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +28,7 @@ class ShowsController {
     private final ShowsService showsService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     void schedule(@Valid @RequestBody ScheduleShowRequest request) {
         showsService.schedule(new ScheduleShowCommand(
             request.cinemaId(), request.cinemaHallId(), request.movieId(), request.when()

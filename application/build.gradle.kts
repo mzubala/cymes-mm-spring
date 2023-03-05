@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":cinemas"))
     implementation(project(":movies"))
     implementation(project(":show-scheduler"))
+    implementation(project(":users"))
     implementation(project(":commons:commons-rest"))
     implementation(project(":commons:commons-configuration"))
     implementation(project(":commons:shared-kernel"))

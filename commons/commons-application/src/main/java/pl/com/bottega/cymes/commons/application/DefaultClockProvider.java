@@ -1,7 +1,7 @@
 package pl.com.bottega.cymes.commons.application;
 
-import jakarta.validation.ClockProvider;
 import org.springframework.stereotype.Component;
+import pl.com.bottega.cymes.sharedkernel.ClockProvider;
 
 import java.time.Clock;
 

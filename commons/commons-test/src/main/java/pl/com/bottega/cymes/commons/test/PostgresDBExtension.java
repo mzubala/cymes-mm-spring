@@ -36,7 +36,7 @@ public class PostgresDBExtension implements BeforeAllCallback, BeforeEachCallbac
         List<String> tablesToTruncate = new ArrayList<>();
         while (tables.next()) {
             String tableName = tables.getString("TABLE_NAME");
-            tablesToTruncate.add(tableName);
+            tablesToTruncate.add("\"" + tableName + "\"");
         }
         connection.prepareStatement("TRUNCATE " + tablesToTruncate.stream().collect(Collectors.joining(","))).executeUpdate();
         connection.close();

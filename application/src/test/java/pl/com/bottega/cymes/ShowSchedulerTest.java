@@ -28,6 +28,9 @@ class ShowSchedulerTest {
     private MoviesFixtures moviesFixtures;
 
     @Autowired
+    private UserFixtures userFixtures;
+
+    @Autowired
     private ShowSchedulerApi showSchedulerApi;
 
     @Autowired
@@ -38,6 +41,8 @@ class ShowSchedulerTest {
 
     @BeforeEach
     void setup() {
+        userFixtures.create();
+        userFixtures.loginAsAdmin();
         cinemasFixtures.create();
         moviesFixtures.create();
     }
@@ -105,5 +110,20 @@ class ShowSchedulerTest {
 
         // then
         response.andExpect(status().isConflict());
+    }
+
+    @Test
+    @SneakyThrows
+    void requiresAdminUserToScheduleShow() {
+        // when
+        showSchedulerApi.logOut();
+        var request = new ScheduleShowRequest(cinemasFixtures.wroclawMagnoliaId, cinemasFixtures.hall1WroclawMagnoliaIdId, moviesFixtures.batmanId, timeFixtures.tomorrowAt(10, 0));
+
+        // then
+        showSchedulerApi.schedule(request).andExpect(status().isForbidden());
+
+        // when
+        userFixtures.loginAsCustomer();
+        showSchedulerApi.schedule(request).andExpect(status().isForbidden());
     }
 }

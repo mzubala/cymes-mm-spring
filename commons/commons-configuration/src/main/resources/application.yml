@@ -1,4 +1,7 @@
 spring:
+  sql:
+    init:
+      mode: always
   datasource:
     url: jdbc:postgresql://db:5432/cymes
     username: app
@@ -14,3 +17,7 @@ spring:
 show-scheduler:
   cinema-hall-cleaning-time: PT30M
   commercials-display-time: PT30M
+
+jwt:
+  secret: E(H+MbQeThWmZq4t7w!z%C*F)J@NcRfUjXn2r5u8x/A?D(G+KaPdSgVkYp3s6v9y
+  token-expires-after: PT15M

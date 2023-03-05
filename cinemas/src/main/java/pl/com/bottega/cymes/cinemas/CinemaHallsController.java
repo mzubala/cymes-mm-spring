@@ -3,6 +3,7 @@ package pl.com.bottega.cymes.cinemas;
 import com.google.common.collect.Streams;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +39,7 @@ class CinemaHallsController {
 
     @PostMapping
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     void create(@Valid @RequestBody CreateCinemaHallRequest request) {
         cinemaHallRepository.save(new CinemaHall(
             cinemaRepository.getReferenceById(request.cinemaId()),
@@ -60,6 +62,7 @@ class CinemaHallsController {
 
     @PostMapping("/{hallId}/suspensions")
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     void suspend(@PathVariable("hallId") Long hallId, @Valid @RequestBody SuspendRequest suspendRequest) {
         suspensionRepository.save(new Suspension(
             cinemaHallRepository.getReferenceById(hallId),
@@ -70,6 +73,7 @@ class CinemaHallsController {
 
     @PutMapping("/{hallId}")
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     void update(@PathVariable("hallId") Long hallId, @Valid @RequestBody UpdateCinemaHallRequest updateCinemaHallRequest) {
         var hall = cinemaHallRepository.getReferenceById(hallId);
         hall.setRows(toRows(updateCinemaHallRequest.layout()));
@@ -77,12 +81,14 @@ class CinemaHallsController {
 
     @GetMapping("/{hallId}/suspensions")
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     List<SuspensionDto> getSuspensions(@PathVariable("hallId") Long hallId) {
         return suspensionRepository.findByCinemaHallOrderByFromAscUntilAsc(SuspensionDto.class, cinemaHallRepository.getReferenceById(hallId));
     }
 
     @GetMapping("/{hallId}/suspensions/check")
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     SuspensionCheckDto suspensionCheck(@PathVariable("hallId") Long hallId, @RequestParam("at") Instant at) {
         return new SuspensionCheckDto(
             suspensionRepository.existsByCinemaHallAndFromLessThanEqualAndUntilGreaterThanEqual(cinemaHallRepository.getReferenceById(hallId), at, at)

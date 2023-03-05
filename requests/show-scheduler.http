@@ -1,0 +1,10 @@
+POST http://localhost:8080/shows
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJqdGkiOiIxIiwicm9sZXMiOlsiQURNSU4iXSwiaWF0IjoxNjc4MDIxOTIwLCJleHAiOjE2NzgwMjI4MjB9.gg6DBVoBLhjdnA_oYzxziZbbpk9G27hs1yFCFI2BVmpo-vfDvQlcWashD1yAJOd8Ml5_qQPAReKp6zh8OsSeLA
+
+{
+  "movieId": 1,
+  "cinemaId": 1,
+  "cinemaHallId": 1,
+  "when": "2023-03-20T10:00:00Z"
+}

@@ -97,7 +97,8 @@ Content-Type: application/json
   "description": "Kilkunastoletni Henry i Tommy DeVito trafiają pod opiekę potężnego gangstera. Obaj szybko uczą się panujących w mafii reguł.",
   "genreIds": [1, 2],
   "actorIds": [1],
-  "directorId": 2
+  "directorId": 2,
+  "durationMinutes": 120
 }
 
 ###

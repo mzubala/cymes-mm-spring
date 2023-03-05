@@ -2,6 +2,7 @@ package pl.com.bottega.cymes.cinemas;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +36,7 @@ public class CinemasController {
     private final CinemaHallRepository cinemaHallRepository;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public void create(@Valid @RequestBody CreateCinemaRequest request) {
         cinemaRepository.save(new Cinema(request.name(), request.city()));
     }
@@ -45,23 +47,27 @@ public class CinemasController {
     }
 
     @PostMapping("/{id}/suspensions")
+    @PreAuthorize("hasRole('ADMIN')")
     public void suspend(@PathVariable("id") Long cinemaId, @Valid @RequestBody SuspendRequest suspendRequest) {
         suspensionRepository.save(new Suspension(cinemaRepository.getReferenceById(cinemaId), suspendRequest.from(), suspendRequest.until()));
     }
 
     @DeleteMapping("/suspensions/{id}")
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void cancelSuspension(@PathVariable("id") Long suspensionId) {
         var suspension = suspensionRepository.getReferenceById(suspensionId);
         suspension.cancel();
     }
 
     @GetMapping("/{cinemaId}/suspensions")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<SuspensionDto> getSuspensions(@PathVariable("cinemaId") Long cinemaId) {
         return suspensionRepository.findByCinemaOrderByFromAscUntilAsc(SuspensionDto.class, cinemaRepository.getReferenceById(cinemaId));
     }
 
     @GetMapping("/{cinemaId}/suspensions/check")
+    @PreAuthorize("hasRole('ADMIN')")
     public SuspensionCheckDto suspensionCheck(@PathVariable("cinemaId") Long cinemaId, @RequestParam("at") Instant at) {
         return new SuspensionCheckDto(suspensionRepository.existsByCinemaAndFromLessThanEqualAndUntilGreaterThanEqual(
             cinemaRepository.getReferenceById(cinemaId),
@@ -71,6 +77,7 @@ public class CinemasController {
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public DetailedCinemaInfoDto get(@PathVariable("id") Long cinemaId, @RequestParam("at") Instant at) {
         var cinema = cinemaRepository.getReferenceById(cinemaId);
         var halls = cinemaHallRepository.findByCinema(cinema);
