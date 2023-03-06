@@ -18,6 +18,8 @@ class PersistentCommand {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private Long userId;
     @Column(length = 4096)
     private String jsonPayload;
