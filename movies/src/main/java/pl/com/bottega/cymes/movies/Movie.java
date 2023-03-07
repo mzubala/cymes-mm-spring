@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.com.bottega.cymes.movies.requests.MovieDto;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 

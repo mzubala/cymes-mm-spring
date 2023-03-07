@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.lang.Nullable;
-import pl.com.bottega.cymes.movies.MoviesFacade.MovieDto;
 
 import java.util.List;
 import java.util.Optional;

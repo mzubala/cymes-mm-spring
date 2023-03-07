@@ -14,8 +14,8 @@ import pl.com.bottega.cymes.cinemas.requests.CreateCinemaRequest;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static pl.com.bottega.cymes.commons.test.MockMvcAssertions.assertSuccess;
 import static pl.com.bottega.cymes.CreateCinemaHallRequestExample.aCreateCinemaHallRequest;
+import static pl.com.bottega.cymes.commons.test.MockMvcAssertions.assertSuccess;
 
 @Component
 @RequiredArgsConstructor
