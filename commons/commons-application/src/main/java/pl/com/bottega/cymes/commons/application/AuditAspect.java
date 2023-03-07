@@ -12,6 +12,7 @@ import pl.com.bottega.cymes.sharedkernel.UserCommand;
 @Aspect
 @Component
 @RequiredArgsConstructor
+// TODO - set order
 class AuditAspect {
 
     private final PersistentCommandRepository persistentCommandRepository;

@@ -6,6 +6,7 @@ import pl.com.bottega.cymes.sharedkernel.UserCommand;
 
 @Component
 @Aspect
+// TODO - set order
 class InjectUserIdAspect {
 
     // TODO

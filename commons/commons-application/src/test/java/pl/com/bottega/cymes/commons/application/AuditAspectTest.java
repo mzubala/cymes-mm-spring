@@ -6,8 +6,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pl.com.bottega.cymes.commons.test.Faker;
@@ -15,6 +19,8 @@ import pl.com.bottega.cymes.commons.test.FixedClockProvider;
 import pl.com.bottega.cymes.commons.test.IntegrationTest;
 import pl.com.bottega.cymes.sharedkernel.Command;
 import pl.com.bottega.cymes.sharedkernel.UserCommand;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,6 +47,12 @@ class AuditAspectTest {
 
     @Autowired
     private NonTxBean nonTxBean;
+
+    @BeforeEach
+    void setup() {
+        var auth = new UsernamePasswordAuthenticationToken(1L, null, List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
 
     @Test
     void savesAuditAfterSuccessfulCommandExecution() {
@@ -130,11 +142,11 @@ class AuditAspectTest {
 @Transactional
 class GloballyAuditedBean {
 
-    void doWork(TestCommand command) {
+    void doWork(@InjectUserId TestCommand command) {
 
     }
 
-    void doOtherWork(OtherTestCommand command) {
+    void doOtherWork(@InjectUserId OtherTestCommand command) {
 
     }
 
@@ -147,7 +159,7 @@ class GloballyAuditedBean {
 
     }
 
-    void doFailingWork(TestCommand cmd) {
+    void doFailingWork(@InjectUserId TestCommand cmd) {
         throw new RuntimeException("Error!");
     }
 }
@@ -156,7 +168,7 @@ class GloballyAuditedBean {
 @Audited
 class NonTxBean {
 
-    void doWork(TestCommand command) {
+    void doWork(@InjectUserId TestCommand command) {
 
     }
 }
@@ -167,7 +179,7 @@ class NonTxBean {
 class LocallyAuditedBean {
 
     @Audited
-    void doWork(TestCommand command) {
+    void doWork(@InjectUserId TestCommand command) {
 
     }
 }
