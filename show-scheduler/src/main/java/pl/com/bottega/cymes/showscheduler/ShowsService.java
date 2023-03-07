@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pl.com.bottega.cymes.cinemas.CinemasFacade;
 import pl.com.bottega.cymes.commons.application.Audited;
+import pl.com.bottega.cymes.commons.application.InjectUserId;
 import pl.com.bottega.cymes.movies.MoviesFacade;
 import pl.com.bottega.cymes.movies.MoviesFacade.MovieDto;
 import pl.com.bottega.cymes.sharedkernel.UserCommand;
@@ -37,7 +38,7 @@ class ShowsService {
 
     @Transactional
     @Audited
-    void schedule(ScheduleShowCommand command) {
+    void schedule(@InjectUserId ScheduleShowCommand command) {
         var movie = moviesFacade.getMovie(command.getMovieId());
         var show = createNewShow(command, movie);
         if (cinemasFacade.isCinemaSuspended(command.getCinemaId(), show.getFrom(), show.getUntil())) {

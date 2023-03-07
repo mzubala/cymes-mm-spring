@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import pl.com.bottega.cymes.sharedkernel.ClockProvider;
 import pl.com.bottega.cymes.sharedkernel.UserCommand;
@@ -12,7 +13,8 @@ import pl.com.bottega.cymes.sharedkernel.UserCommand;
 @Aspect
 @Component
 @RequiredArgsConstructor
-class AuditAspect {
+@Order(1)
+public class AuditAspect {
 
     private final PersistentCommandRepository persistentCommandRepository;
     private final ObjectMapper objectMapper;
