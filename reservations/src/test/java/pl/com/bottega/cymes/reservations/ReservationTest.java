@@ -36,6 +36,10 @@ class ReservationTest {
             .isInstanceOf(InvalidReservationParamsException.class);
         assertThatThrownBy(() -> aReservation().withCustomerInformation(aCustomerInformation().withLastName(null)).build())
             .isInstanceOf(InvalidReservationParamsException.class);
+        assertThatThrownBy(() -> aReservation().withTicketCounts(Map.of(TicketKind.REGULAR, 0)).build())
+            .isInstanceOf(InvalidReservationParamsException.class);
+        assertThatThrownBy(() -> aReservation().withTicketCounts(Map.of(TicketKind.REGULAR, -1)).build())
+            .isInstanceOf(InvalidReservationParamsException.class);
     }
 
 }

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static pl.com.bottega.cymes.reservations.CinemaHallBuilder.aCinemaHall;
 import static pl.com.bottega.cymes.reservations.CustomerInformationBuilder.aCustomerInformation;
 import static pl.com.bottega.cymes.reservations.ShowDtoBuilder.aShowDto;
@@ -77,5 +78,18 @@ class ReservationsModuleTest {
         // then
         var savedReservation = reservationRepository.getReferenceById(reservationId);
         assertThat(savedReservation.getUserId()).isEqualTo(customerInformation.userId());
+    }
+
+    @Test
+    void cannotCreateReservationWithSeatsNonExistingInTheCinemaHall() {
+        // expect
+        assertThatThrownBy(() -> {
+            reservationService.createReservation(new CreateReservationCommand(
+                show.showId(),
+                null,
+                ticketCounts,
+                Set.of(new Seat(10, 10), new Seat(999, 11))
+            ));
+        }).isInstanceOf(InvalidReservationParamsException.class);
     }
 }

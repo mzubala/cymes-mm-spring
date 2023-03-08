@@ -19,7 +19,18 @@ class ReservationService {
 
     @Transactional
     UUID createReservation(CreateReservationCommand createReservationCommand) {
-        return null;
+        Reservation reservation;
+        var show = showProvider.getShow(createReservationCommand.showId());
+        var cinemaHall = cinemaHallProvider.getById(show.cinemaHallId());
+        cinemaHall.ensureValidSeats(createReservationCommand.seats());
+        if(createReservationCommand.userId() != null) {
+            var customerInformation = customerInformationProvider.getByUserId(createReservationCommand.userId());
+            reservation = new Reservation(show, customerInformation, createReservationCommand.ticketCounts(), createReservationCommand.seats());
+        } else {
+            reservation = new Reservation(show, createReservationCommand.ticketCounts(), createReservationCommand.seats());
+        }
+        reservationRepository.save(reservation);
+        return reservation.getId();
     }
 }
 
