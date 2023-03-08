@@ -16,7 +16,7 @@ class Reservation {
     protected Reservation() {}
 
     Reservation(ShowDto showDto, Map<TicketKind, Integer> ticketCounts, Set<Seat> seats) {
-        this(showDto, null, ticketCounts, seats);
+
     }
 
     public Reservation(ShowDto showDto, CustomerInformation customerInformation, Map<TicketKind, Integer> ticketCounts, Set<Seat> seats) {

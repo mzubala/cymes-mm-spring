@@ -27,7 +27,12 @@ abstract class InMemoryDb<T, ID> {
 class InMemoryReservationRepository extends InMemoryDb<Reservation, UUID> implements ReservationRepository {
     @Override
     public Reservation getReferenceById(UUID id) {
-        return null;
+        return get(id);
+    }
+
+    @Override
+    public void save(Reservation reservation) {
+        save(reservation.getId(), reservation);
     }
 }
 
@@ -35,7 +40,7 @@ class InMemoryShowProvider extends InMemoryDb<ShowDto, Long> implements ShowProv
 
     @Override
     public ShowDto getShow(Long showId) {
-        return null;
+        return get(showId);
     }
 }
 
@@ -43,7 +48,7 @@ class InMemoryCustomerInformationProvider extends InMemoryDb<CustomerInformation
 
     @Override
     public CustomerInformation getByUserId(Long userId) {
-        return null;
+        return get(userId);
     }
 }
 
@@ -51,6 +56,6 @@ class InMemoryCinemaHallProvider extends InMemoryDb<CinemaHall, Long> implements
 
     @Override
     public CinemaHall getById(Long cinemaHallId) {
-        return null;
+        return get(cinemaHallId);
     }
 }

@@ -28,9 +28,9 @@ class ReservationBuilder {
 
     Reservation build() {
         if(customerInformation == null) {
-            return new Reservation(showDto.build(), ticketCounts, seats);
+            return new Reservation(showDto == null ? null : showDto.build(), ticketCounts, seats);
         } else {
-            return new Reservation(showDto.build(), customerInformation.build(), ticketCounts, seats);
+            return new Reservation(showDto.build(), customerInformation == null ? null : customerInformation.build(), ticketCounts, seats);
         }
     }
 }
