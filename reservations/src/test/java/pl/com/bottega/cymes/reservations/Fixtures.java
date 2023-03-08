@@ -7,19 +7,20 @@ import pl.com.bottega.cymes.commons.test.Faker;
 import pl.com.bottega.cymes.showscheduler.dto.ShowDto;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import static pl.com.bottega.cymes.reservations.ShowDtoBuilder.aShowDto;
 
 @With
 @AllArgsConstructor
 @NoArgsConstructor
 class ReservationBuilder {
-    Long showId = 1L;
-    Long userId = 1L;
+    ShowDtoBuilder showDto = aShowDto();
+    CustomerInformationBuilder customerInformation = null;
     Map<TicketKind, Integer> ticketCounts = Map.of(TicketKind.REGULAR, 2);
     Set<Seat> seats = Set.of(new Seat(10, 10), new Seat(10, 11));
-
-    CustomerInformation customerInformation = null;
 
     static ReservationBuilder aReservation() {
         return new ReservationBuilder();
@@ -27,9 +28,9 @@ class ReservationBuilder {
 
     Reservation build() {
         if(customerInformation == null) {
-            return new Reservation(showId, ticketCounts, seats);
+            return new Reservation(showDto.build(), ticketCounts, seats);
         } else {
-            return new Reservation(showId, customerInformation, ticketCounts, seats);
+            return new Reservation(showDto.build(), customerInformation.build(), ticketCounts, seats);
         }
     }
 }
@@ -52,6 +53,9 @@ class ShowDtoBuilder {
     }
 }
 
+@NoArgsConstructor
+@AllArgsConstructor
+@With
 class CustomerInformationBuilder {
 
     Long userId = 1L;
@@ -60,11 +64,34 @@ class CustomerInformationBuilder {
     String phoneNumber = new Faker().phoneNumber().phoneNumber();
     String email = new Faker().internet().emailAddress();
 
-    CustomerInformationBuilder aCustomerInformation() {
+    static CustomerInformationBuilder aCustomerInformation() {
         return new CustomerInformationBuilder();
     }
 
     CustomerInformation build() {
         return new CustomerInformation(userId, firstName, lastName, phoneNumber, email);
+    }
+}
+
+@AllArgsConstructor
+@NoArgsConstructor
+@With
+class CinemaHallBuilder {
+    Long cinemaHallId = 1L;
+    Map<Integer, Integer> rowNumberToSeatCount = new HashMap<>();
+    static CinemaHallBuilder aCinemaHall() {
+        var builder = new CinemaHallBuilder();
+        builder.rowNumberToSeatCount.put(1, 10);
+        builder.rowNumberToSeatCount.put(2, 10);
+        return builder;
+    }
+
+    CinemaHallBuilder withRow(int number, int seatsCount) {
+        rowNumberToSeatCount.put(number, seatsCount);
+        return this;
+    }
+
+    CinemaHall build() {
+        return new CinemaHall(cinemaHallId, rowNumberToSeatCount);
     }
 }

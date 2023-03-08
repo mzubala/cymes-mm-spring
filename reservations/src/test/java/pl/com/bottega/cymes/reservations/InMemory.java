@@ -46,3 +46,11 @@ class InMemoryCustomerInformationProvider extends InMemoryDb<CustomerInformation
         return null;
     }
 }
+
+class InMemoryCinemaHallProvider extends InMemoryDb<CinemaHall, Long> implements CinemaHallProvider {
+
+    @Override
+    public CinemaHall getById(Long cinemaHallId) {
+        return null;
+    }
+}
