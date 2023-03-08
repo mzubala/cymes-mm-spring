@@ -2,6 +2,7 @@ package pl.com.bottega.cymes.reservations;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import pl.com.bottega.cymes.showscheduler.dto.ShowDto;
 
 import java.util.Map;
 import java.util.Set;
@@ -14,11 +15,11 @@ class Reservation {
 
     protected Reservation() {}
 
-    Reservation(Long showId, Map<TicketKind, Integer> ticketCounts, Set<Seat> seats) {
-
+    Reservation(ShowDto showDto, Map<TicketKind, Integer> ticketCounts, Set<Seat> seats) {
+        this(showDto, null, ticketCounts, seats);
     }
 
-    public Reservation(Long showId, CustomerInformation customerInformation, Map<TicketKind, Integer> ticketCounts, Set<Seat> seats) {
+    public Reservation(ShowDto showDto, CustomerInformation customerInformation, Map<TicketKind, Integer> ticketCounts, Set<Seat> seats) {
 
     }
 
