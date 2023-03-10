@@ -1,6 +1,8 @@
 package pl.com.bottega.cymes.reservations;
 
 import org.junit.jupiter.api.Test;
+import pl.com.bottega.cymes.reservations.StartPaymentCommand.AnonymousCustomerInformation;
+import pl.com.bottega.cymes.reservations.StartPaymentCommand.RegisteredCustomerInformation;
 
 import java.util.Map;
 import java.util.Set;
@@ -53,5 +55,83 @@ class ReservationTest {
 
         // expect
         assertThat(reservation.getReceipt().getTotal()).isEqualTo(new Money(30));
+    }
+
+    @Test
+    void cannotStartPaymentIfOnlinePaymentHasBeenStarted() {
+        // given
+        var reservation = aReservation().nonAnonymous().build();
+        reservation.startOnlinePayment("test", null, aRegisteredCustomerInformation());
+
+        // expect
+        assertThatThrownBy(() -> {
+            reservation.startOnlinePayment("test", null, aRegisteredCustomerInformation());
+        }).isInstanceOf(IllegalReservationOperationException.class);
+        assertThatThrownBy(() -> {
+            reservation.startOnsitePayment(null, aRegisteredCustomerInformation());
+        }).isInstanceOf(IllegalReservationOperationException.class);
+    }
+
+    @Test
+    void cannotStartPaymentIfOnsitePaymentHasBeenStarted() {
+        // given
+        var reservation = aReservation().nonAnonymous().build();
+        reservation.startOnsitePayment(null, aRegisteredCustomerInformation());
+
+        // expect
+        assertThatThrownBy(() -> {
+            reservation.startOnlinePayment("test", null, aRegisteredCustomerInformation());
+        }).isInstanceOf(IllegalReservationOperationException.class);
+        assertThatThrownBy(() -> {
+            reservation.startOnsitePayment(null, aRegisteredCustomerInformation());
+        }).isInstanceOf(IllegalReservationOperationException.class);
+    }
+
+    @Test
+    void anonymousReservationRequiresFullCustomerInformationToStartPayment() {
+        // given
+        var anonymousReservation = aReservation().anonymous().build();
+
+        // expect
+        assertThatThrownBy(() -> {
+            anonymousReservation.startOnsitePayment(null, null);
+        }).isInstanceOf(InvalidReservationParamsException.class);
+        assertThatThrownBy(() -> {
+            anonymousReservation.startOnlinePayment("test", null, null);
+        }).isInstanceOf(InvalidReservationParamsException.class);
+        assertThatThrownBy(() -> {
+            anonymousReservation.startOnsitePayment(null, aRegisteredCustomerInformation());
+        }).isInstanceOf(InvalidReservationParamsException.class);
+        assertThatThrownBy(() -> {
+            anonymousReservation.startOnlinePayment("test", null, aRegisteredCustomerInformation());
+        }).isInstanceOf(InvalidReservationParamsException.class);
+    }
+
+    @Test
+    void nonAnonymousReservationRequiresFullCustomerInformationToStartPayment() {
+        // given
+        var nonAnonymousReservation = aReservation().nonAnonymous().build();
+
+        // expect
+        assertThatThrownBy(() -> {
+            nonAnonymousReservation.startOnsitePayment(null, null);
+        }).isInstanceOf(InvalidReservationParamsException.class);
+        assertThatThrownBy(() -> {
+            nonAnonymousReservation.startOnlinePayment("test", null, null);
+        }).isInstanceOf(InvalidReservationParamsException.class);
+        assertThatThrownBy(() -> {
+            nonAnonymousReservation.startOnsitePayment(anAnonymousCustomerInformation(), null);
+        }).isInstanceOf(InvalidReservationParamsException.class);
+        assertThatThrownBy(() -> {
+            nonAnonymousReservation.startOnlinePayment("test", anAnonymousCustomerInformation(), null);
+        }).isInstanceOf(InvalidReservationParamsException.class);
+    }
+
+    private AnonymousCustomerInformation anAnonymousCustomerInformation() {
+        return new AnonymousCustomerInformation("X", "Y", "x@test.com", "400 400 400");
+    }
+
+    private static RegisteredCustomerInformation aRegisteredCustomerInformation() {
+        return new RegisteredCustomerInformation("500 500 500");
     }
 }

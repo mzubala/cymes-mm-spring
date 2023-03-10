@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static pl.com.bottega.cymes.reservations.CinemaHallBuilder.aCinemaHall;
 import static pl.com.bottega.cymes.reservations.CustomerInformationBuilder.aCustomerInformation;
 import static pl.com.bottega.cymes.reservations.RecipeCalculatorFixtures.defaultReceiptCalculator;
+import static pl.com.bottega.cymes.reservations.ReservationStatus.WAITING_ONLINE_PAYMENT;
 import static pl.com.bottega.cymes.reservations.ReservationStatus.WAITING_ONSITE_PAYMENT;
 import static pl.com.bottega.cymes.reservations.ShowDtoBuilder.aShowDto;
 
@@ -94,7 +95,7 @@ class ReservationsModuleTest {
             new CreateReservationCommand(show.showId(), null, ticketCounts, seats));
 
         // when
-        reservationService.selectOnsitePayment(new StartPaymentCommand(reservationId,
+        reservationService.startOnsitePayment(new StartPaymentCommand(reservationId,
             new AnonymousCustomerInformation("John", "Doe", "john@test.com", "600 000 000"), null
         ));
 
@@ -103,7 +104,7 @@ class ReservationsModuleTest {
         assertThat(savedReservation.getStatus()).isEqualTo(WAITING_ONSITE_PAYMENT);
         assertThat(savedReservation.getPayment().getMethod()).isEqualTo(PaymentMethod.ONSITE);
         assertThat(savedReservation.getCustomerInfromation()).isEqualTo(
-            new CustomerInformation(null, "John", "Doe", "john@test.com", "600 000 000"));
+            new CustomerInformation(null, "John", "Doe", "600 000 000", "john@test.com"));
     }
 
     @Test
@@ -119,11 +120,11 @@ class ReservationsModuleTest {
 
         // then
         var savedReservation = reservationRepository.getReferenceById(reservationId);
-        assertThat(savedReservation.getStatus()).isEqualTo(WAITING_ONSITE_PAYMENT);
+        assertThat(savedReservation.getStatus()).isEqualTo(WAITING_ONLINE_PAYMENT);
         assertThat(savedReservation.getPayment().getMethod()).isEqualTo(PaymentMethod.ONLINE);
         assertThat(savedReservation.getPayment().getExternalId()).isEqualTo(fakePaymentFacade.getLastStartedPayment().id());
         assertThat(savedReservation.getCustomerInfromation()).isEqualTo(
-            new CustomerInformation(null, "John", "Doe", "john@test.com", "600 000 000"));
+            new CustomerInformation(null, "John", "Doe", "600 000 000", "john@test.com"));
         assertThat(startedPayment).isEqualTo(fakePaymentFacade.getLastStartedPayment());
         assertThat(fakePaymentFacade.getLastStartedPaymentAmount()).isEqualTo(new Money(20));
     }

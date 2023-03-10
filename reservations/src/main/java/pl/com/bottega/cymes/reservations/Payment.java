@@ -40,7 +40,7 @@ class Payment {
         this(reservation, online, null);
     }
 
-    public Payment(Reservation reservation, PaymentMethod method, String externalId, boolean completed) {
+    private Payment(Reservation reservation, PaymentMethod method, String externalId, boolean completed) {
         this.reservation = reservation;
         this.method = method;
         this.externalId = externalId;
@@ -52,7 +52,7 @@ class Payment {
     }
 
     static Payment createOnsitePayment(Reservation reservation) {
-        return new Payment(reservation, PaymentMethod.ONLINE);
+        return new Payment(reservation, PaymentMethod.ONSITE);
     }
 
     Payment complete() {

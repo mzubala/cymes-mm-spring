@@ -10,7 +10,7 @@ interface PaymentsFacade {
     StartedPayment startPayment(UUID reservationId, Money amount);
 }
 
-record StartedPayment(UUID id, URI redirectUri) {
+record StartedPayment(String id, URI redirectUri) {
 
 }
 
@@ -20,6 +20,6 @@ class ExternalPaymentGatewayFacade implements PaymentsFacade {
     @Override
     @SneakyThrows
     public StartedPayment startPayment(UUID reservationId, Money amount) {
-        return new StartedPayment(UUID.randomUUID(), new URI("http://todo.com/" + reservationId));
+        return new StartedPayment(UUID.randomUUID().toString(), new URI("http://todo.com/" + reservationId));
     }
 }

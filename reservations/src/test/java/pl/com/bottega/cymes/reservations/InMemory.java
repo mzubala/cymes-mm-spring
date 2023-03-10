@@ -71,7 +71,7 @@ class FakePaymentFacade implements PaymentsFacade {
     @SneakyThrows
     @Override
     public StartedPayment startPayment(UUID reservationId, Money amount) {
-        lastStartedPayment = new StartedPayment(UUID.randomUUID(), new URI("http://test.com"));
+        lastStartedPayment = new StartedPayment(UUID.randomUUID().toString(), new URI("http://test.com"));
         lastStartedPaymentAmount = amount;
         return lastStartedPayment;
     }

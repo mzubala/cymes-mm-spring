@@ -1,5 +1,7 @@
 package pl.com.bottega.cymes.reservations;
 
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
@@ -113,7 +115,24 @@ class Reservation {
     }
 
     Payment getPayment() {
+        return payment;
+    }
+
+    CustomerInformation getCustomerInfromation() {
         return null;
+    }
+
+    void startOnlinePayment(
+        String externalPaymentId, StartPaymentCommand.AnonymousCustomerInformation anonymousCustomerInformation,
+        StartPaymentCommand.RegisteredCustomerInformation registeredCustomerInformation
+    ) {
+
+    }
+
+    void startOnsitePayment(
+        StartPaymentCommand.AnonymousCustomerInformation anonymousCustomerInformation, StartPaymentCommand.RegisteredCustomerInformation registeredCustomerInformation
+    ) {
+
     }
 
     private void checkParameter(boolean expression, String errorMessage) {
@@ -148,10 +167,6 @@ class Reservation {
         );
     }
 
-    CustomerInformation getCustomerInfromation() {
-        return null;
-    }
-
     @Embeddable
     static class SeatEmbeddable {
 
@@ -172,6 +187,7 @@ class Reservation {
     }
 
     @Embeddable
+    @Access(AccessType.FIELD)
     static class CustomerInformationEmbeddable {
         private Long userId;
         private String firstName;
@@ -198,6 +214,12 @@ enum ReservationStatus {
 
 class InvalidReservationParamsException extends RuntimeException {
     InvalidReservationParamsException(String message) {
+        super(message);
+    }
+}
+
+class IllegalReservationOperationException extends RuntimeException {
+    IllegalReservationOperationException(String message) {
         super(message);
     }
 }

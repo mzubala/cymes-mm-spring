@@ -42,13 +42,12 @@ class ReservationService {
         return reservation.getId();
     }
 
-    @Transactional
     StartedPayment startOnlinePayment(StartPaymentCommand command) {
         return null;
     }
 
     @Transactional
-    void selectOnsitePayment(StartPaymentCommand command) {
+    void startOnsitePayment(StartPaymentCommand command) {
 
     }
 }
