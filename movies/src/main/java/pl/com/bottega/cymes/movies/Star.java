@@ -29,13 +29,11 @@ class Star {
     public boolean equals(Object o) {
         if (this == o) return true;
 
-        if (!(o instanceof Star))
-            return false;
+        if (!(o instanceof Star)) return false;
 
         Star other = (Star) o;
 
-        return id != null &&
-            id.equals(other.getId());
+        return id != null && id.equals(other.getId());
     }
 
     @Override

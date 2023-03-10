@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 import pl.com.bottega.cymes.showscheduler.dto.ShowDto;
 
 import java.util.HashMap;
@@ -16,6 +18,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static jakarta.persistence.CascadeType.ALL;
 import static pl.com.bottega.cymes.reservations.ReservationStatus.SEATS_RESERVED;
 
 @Entity
@@ -37,24 +40,43 @@ class Reservation {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
+    @OneToOne(mappedBy = "reservation", orphanRemoval = true, cascade = ALL)
+    private Receipt receipt;
+
+    @OneToOne(mappedBy = "reservation", orphanRemoval = true, cascade = ALL)
+    private Payment payment;
+
+    @Transient
+    private ReceiptCalculator receiptCalculator;
+
     protected Reservation() {
     }
 
-    Reservation(ShowDto showDto, Map<TicketKind, Integer> ticketCounts, Set<Seat> seats) {
-        this(showDto, (CustomerInformationEmbeddable) null, ticketCounts, seats);
+    Reservation(
+        ShowDto showDto, Map<TicketKind, Integer> ticketCounts, Set<Seat> seats, ReceiptCalculator receiptCalculator
+    ) {
+        this(showDto, (CustomerInformationEmbeddable) null, ticketCounts, seats, receiptCalculator);
     }
 
-    public Reservation(ShowDto showDto, CustomerInformation customerInformation, Map<TicketKind, Integer> ticketCounts, Set<Seat> seats) {
-        this(showDto, new CustomerInformationEmbeddable(customerInformation), ticketCounts, seats);
+    public Reservation(
+        ShowDto showDto, CustomerInformation customerInformation, Map<TicketKind, Integer> ticketCounts,
+        Set<Seat> seats, ReceiptCalculator receiptCalculator
+    ) {
+        this(showDto, new CustomerInformationEmbeddable(customerInformation), ticketCounts, seats, receiptCalculator);
     }
 
-    private Reservation(ShowDto showDto, CustomerInformationEmbeddable customerInformation, Map<TicketKind, Integer> ticketCounts, Set<Seat> seats) {
+    private Reservation(
+        ShowDto showDto, CustomerInformationEmbeddable customerInformation, Map<TicketKind, Integer> ticketCounts,
+        Set<Seat> seats, ReceiptCalculator receiptCalculator
+    ) {
+        this.receiptCalculator = receiptCalculator;
         validateParameters(showDto, customerInformation, ticketCounts, seats);
         this.showId = showDto.showId();
         this.customerInformation = customerInformation;
         this.ticketCounts.putAll(ticketCounts);
         this.seats.addAll(seats.stream().map(SeatEmbeddable::new).toList());
         this.status = SEATS_RESERVED;
+        this.receipt = receiptCalculator.calculate(this);
     }
 
     Long getShowId() {
@@ -64,7 +86,8 @@ class Reservation {
     Long getUserId() {
         if (customerInformation == null) {
             return null;
-        } else {
+        }
+        else {
             return customerInformation.userId;
         }
     }
@@ -85,6 +108,14 @@ class Reservation {
         return status;
     }
 
+    Receipt getReceipt() {
+        return receipt;
+    }
+
+    Payment getPayment() {
+        return null;
+    }
+
     private void checkParameter(boolean expression, String errorMessage) {
         if (!expression) {
             throw new InvalidReservationParamsException(errorMessage);
@@ -98,18 +129,27 @@ class Reservation {
         }).sum();
     }
 
-    private void validateParameters(ShowDto showDto, CustomerInformationEmbeddable customerInformation, Map<TicketKind, Integer> ticketCounts, Set<Seat> seats) {
+    private void validateParameters(
+        ShowDto showDto, CustomerInformationEmbeddable customerInformation, Map<TicketKind, Integer> ticketCounts,
+        Set<Seat> seats
+    ) {
         checkParameter(showDto != null, "Show must be defined");
         checkParameter(seats != null, "Seats must be defined");
         checkParameter(ticketCounts != null, "Ticket count must be defined");
-        if(customerInformation != null) {
+        if (customerInformation != null) {
             checkParameter(customerInformation.userId != null, "User must be defined");
             checkParameter(customerInformation.firstName != null, "Customer first name must be defined");
             checkParameter(customerInformation.lastName != null, "Customer last name must be defined");
         }
         Integer numberOfTickets = totalNumberOfTickets(ticketCounts);
         checkParameter(numberOfTickets > 0, "Number of tickets must be non-zero");
-        checkParameter(numberOfTickets.equals(seats.size()), "There should be the same number of ticekts and seats selected");
+        checkParameter(numberOfTickets.equals(seats.size()),
+            "There should be the same number of ticekts and seats selected"
+        );
+    }
+
+    CustomerInformation getCustomerInfromation() {
+        return null;
     }
 
     @Embeddable
@@ -153,11 +193,7 @@ class Reservation {
 }
 
 enum ReservationStatus {
-    DRAFT, SEATS_RESERVED,
-    WAITING_ONLINE_PAYMENT,
-    WAITING_ONSITE_PAYMENT,
-    PAID,
-    CANCELED
+    DRAFT, SEATS_RESERVED, WAITING_ONLINE_PAYMENT, WAITING_ONSITE_PAYMENT, PAID, CANCELED
 }
 
 class InvalidReservationParamsException extends RuntimeException {

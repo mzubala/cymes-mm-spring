@@ -55,15 +55,8 @@ abstract class Api {
 
     @SneakyThrows
     protected ExtendedResultActions post(String uriTemplate, Object body, Object... uriVariables) {
-        return new ExtendedResultActions(
-            mockMvc.perform(
-                withAuth(MockMvcRequestBuilders
-                    .post(uriTemplate, uriVariables)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(body))
-                )
-            )
-        );
+        return new ExtendedResultActions(mockMvc.perform(withAuth(MockMvcRequestBuilders.post(uriTemplate, uriVariables)
+            .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(body)))));
     }
 
     @SneakyThrows
@@ -85,13 +78,15 @@ abstract class Api {
 
     @SneakyThrows
     protected <T> PageTestImpl<T> getPage(String uriTemplate, Class<T> pageElementClass, Object... uriVariables) {
-        return new ExtendedResultActions(mockMvc.perform(withAuth(get(uriTemplate, uriVariables)))).getPage(pageElementClass);
+        return new ExtendedResultActions(mockMvc.perform(withAuth(get(uriTemplate, uriVariables)))).getPage(
+            pageElementClass);
     }
 
     private MockHttpServletRequestBuilder withAuth(MockHttpServletRequestBuilder builder) {
         if (authToken == null) {
             return builder;
-        } else {
+        }
+        else {
             return builder.header("Authorization", "Bearer " + authToken);
         }
     }
@@ -217,12 +212,16 @@ abstract class Api {
         @SneakyThrows
         <T> List<T> getList(Class<T> elementClass) {
             var content = decorated.getContentAsString();
-            return objectMapper.readValue(content, objectMapper.getTypeFactory().constructCollectionType(List.class, elementClass));
+            return objectMapper.readValue(
+                content, objectMapper.getTypeFactory().constructCollectionType(List.class, elementClass));
         }
 
         @SneakyThrows
         <T> PageTestImpl<T> getPage(Class<T> pageElementClass) {
-            return objectMapper.readValue(getContentAsString(), objectMapper.getTypeFactory().constructParametricType(PageTestImpl.class, pageElementClass));
+            return objectMapper.readValue(
+                getContentAsString(),
+                objectMapper.getTypeFactory().constructParametricType(PageTestImpl.class, pageElementClass)
+            );
         }
 
         @Override

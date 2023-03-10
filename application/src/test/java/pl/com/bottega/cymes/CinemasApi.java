@@ -36,8 +36,8 @@ class CinemasApi extends Api {
     }
 
     Long getCinemaId(String city, String name) {
-        return getCinemas().stream().filter(c -> c.city().equals(city) && c.name().equals(name))
-            .findFirst().orElseThrow(IllegalArgumentException::new).id();
+        return getCinemas().stream().filter(c -> c.city().equals(city) && c.name().equals(name)).findFirst()
+            .orElseThrow(IllegalArgumentException::new).id();
     }
 
     DetailedCinemaInfoDto getCinemaDetails(Long cinemaId) {

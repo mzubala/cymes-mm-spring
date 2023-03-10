@@ -12,9 +12,9 @@ public class TimeFixtures {
 
     public Instant tomorrowAt(int hour, int minute) {
         var tomorrowSameTime = LocalDateTime.now().plusDays(1);
-        return LocalDateTime.of(tomorrowSameTime.getYear(), tomorrowSameTime.getMonth(), tomorrowSameTime.getDayOfMonth(), hour, minute)
-            .atZone(ZoneId.systemDefault())
-            .toInstant();
+        return LocalDateTime.of(
+                tomorrowSameTime.getYear(), tomorrowSameTime.getMonth(), tomorrowSameTime.getDayOfMonth(), hour, minute)
+            .atZone(ZoneId.systemDefault()).toInstant();
     }
 
     public LocalDate tomorrow() {

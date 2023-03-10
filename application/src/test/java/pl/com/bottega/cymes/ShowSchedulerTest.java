@@ -52,46 +52,36 @@ class ShowSchedulerTest {
         // given
 
         // when
-        var scheduleResponses = List.of(
-            showSchedulerApi.schedule(
-                new ScheduleShowRequest(cinemasFixtures.lublinPlazaId, cinemasFixtures.hall1LublinPlazaId, moviesFixtures.batmanId, timeFixtures.tomorrowAt(15, 0))
-            ),
-            showSchedulerApi.schedule(
-                new ScheduleShowRequest(cinemasFixtures.lublinPlazaId, cinemasFixtures.hall2LublinPlazaId, moviesFixtures.godfellasId, timeFixtures.tomorrowAt(15, 0))
-            ),
-            showSchedulerApi.schedule(
-                new ScheduleShowRequest(cinemasFixtures.wroclawMagnoliaId, cinemasFixtures.hall1WroclawMagnoliaIdId, moviesFixtures.batmanId, timeFixtures.tomorrowAt(15, 0))
-            ),
-            showSchedulerApi.schedule(
-                new ScheduleShowRequest(cinemasFixtures.wroclawMagnoliaId, cinemasFixtures.hall1WroclawMagnoliaIdId, moviesFixtures.batmanId, timeFixtures.tomorrowAt(18, 0))
-            )
-        );
+        var scheduleResponses = List.of(showSchedulerApi.schedule(
+            new ScheduleShowRequest(cinemasFixtures.lublinPlazaId, cinemasFixtures.hall1LublinPlazaId,
+                moviesFixtures.batmanId, timeFixtures.tomorrowAt(15, 0)
+            )), showSchedulerApi.schedule(
+            new ScheduleShowRequest(cinemasFixtures.lublinPlazaId, cinemasFixtures.hall2LublinPlazaId,
+                moviesFixtures.godfellasId, timeFixtures.tomorrowAt(15, 0)
+            )), showSchedulerApi.schedule(
+            new ScheduleShowRequest(cinemasFixtures.wroclawMagnoliaId, cinemasFixtures.hall1WroclawMagnoliaIdId,
+                moviesFixtures.batmanId, timeFixtures.tomorrowAt(15, 0)
+            )), showSchedulerApi.schedule(
+            new ScheduleShowRequest(cinemasFixtures.wroclawMagnoliaId, cinemasFixtures.hall1WroclawMagnoliaIdId,
+                moviesFixtures.batmanId, timeFixtures.tomorrowAt(18, 0)
+            )));
         var readShowsInLublin = showSchedulerApi.getShows(cinemasFixtures.lublinPlazaId, timeFixtures.tomorrow());
         var readShowsInWroclaw = showSchedulerApi.getShows(cinemasFixtures.wroclawMagnoliaId, timeFixtures.tomorrow());
 
         // then
         assertSuccess(scheduleResponses);
         assertThat(readShowsInLublin).usingRecursiveFieldByFieldElementComparatorIgnoringFields("shows.showId")
-            .containsExactly(
-                new ShowsGroupDto(
-                    new ShowsGroupDto.MovieDto(moviesFixtures.batmanId, "Batman"),
-                    List.of(new ShowsGroupDto.ShowDto(1L, LocalTime.parse("15:00")))
-                ),
-                new ShowsGroupDto(
-                    new ShowsGroupDto.MovieDto(moviesFixtures.godfellasId, "The Godfellas"),
-                    List.of(new ShowsGroupDto.ShowDto(2L, LocalTime.parse("15:00")))
-                )
-            );
+            .containsExactly(new ShowsGroupDto(new ShowsGroupDto.MovieDto(moviesFixtures.batmanId, "Batman"),
+                List.of(new ShowsGroupDto.ShowDto(1L, LocalTime.parse("15:00")))
+            ), new ShowsGroupDto(new ShowsGroupDto.MovieDto(moviesFixtures.godfellasId, "The Godfellas"),
+                List.of(new ShowsGroupDto.ShowDto(2L, LocalTime.parse("15:00")))
+            ));
         assertThat(readShowsInWroclaw).usingRecursiveFieldByFieldElementComparatorIgnoringFields("shows.showId")
-            .containsExactly(
-                new ShowsGroupDto(
-                    new ShowsGroupDto.MovieDto(moviesFixtures.batmanId, "Batman"),
-                    List.of(
-                        new ShowsGroupDto.ShowDto(1L, LocalTime.parse("15:00")),
-                        new ShowsGroupDto.ShowDto(1L, LocalTime.parse("18:00"))
-                    )
+            .containsExactly(new ShowsGroupDto(new ShowsGroupDto.MovieDto(moviesFixtures.batmanId, "Batman"),
+                List.of(new ShowsGroupDto.ShowDto(1L, LocalTime.parse("15:00")),
+                    new ShowsGroupDto.ShowDto(1L, LocalTime.parse("18:00"))
                 )
-            );
+            ));
     }
 
     @Test
@@ -100,13 +90,15 @@ class ShowSchedulerTest {
         // given
         fixedClockProvider.fixAt(timeFixtures.tomorrowAt(10, 0));
         showSchedulerApi.schedule(
-            new ScheduleShowRequest(cinemasFixtures.wroclawMagnoliaId, cinemasFixtures.hall1WroclawMagnoliaIdId, moviesFixtures.batmanId, fixedClockProvider.now())
-        );
+            new ScheduleShowRequest(cinemasFixtures.wroclawMagnoliaId, cinemasFixtures.hall1WroclawMagnoliaIdId,
+                moviesFixtures.batmanId, fixedClockProvider.now()
+            ));
 
         // when
         var response = showSchedulerApi.schedule(
-            new ScheduleShowRequest(cinemasFixtures.wroclawMagnoliaId, cinemasFixtures.hall1WroclawMagnoliaIdId, moviesFixtures.batmanId, fixedClockProvider.now().plus(135, ChronoUnit.MINUTES))
-        );
+            new ScheduleShowRequest(cinemasFixtures.wroclawMagnoliaId, cinemasFixtures.hall1WroclawMagnoliaIdId,
+                moviesFixtures.batmanId, fixedClockProvider.now().plus(135, ChronoUnit.MINUTES)
+            ));
 
         // then
         response.andExpect(status().isConflict());
@@ -117,7 +109,10 @@ class ShowSchedulerTest {
     void requiresAdminUserToScheduleShow() {
         // when
         showSchedulerApi.logOut();
-        var request = new ScheduleShowRequest(cinemasFixtures.wroclawMagnoliaId, cinemasFixtures.hall1WroclawMagnoliaIdId, moviesFixtures.batmanId, timeFixtures.tomorrowAt(10, 0));
+        var request = new ScheduleShowRequest(
+            cinemasFixtures.wroclawMagnoliaId, cinemasFixtures.hall1WroclawMagnoliaIdId, moviesFixtures.batmanId,
+            timeFixtures.tomorrowAt(10, 0)
+        );
 
         // then
         showSchedulerApi.schedule(request).andExpect(status().isForbidden());

@@ -6,8 +6,7 @@ import java.time.Duration;
 
 @ConfigurationProperties("show-scheduler")
 record ShowSchedulerProperties(
-    Duration cinemaHallCleaningTime,
-    Duration commercialsDisplayTime
+    Duration cinemaHallCleaningTime, Duration commercialsDisplayTime
 ) {
 
 }

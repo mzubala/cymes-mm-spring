@@ -38,17 +38,10 @@ class MoviesController {
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     void create(@RequestBody @Valid CreateMovieRequest request) {
-        movieRepository.save(
-            new Movie(
-                 null,
-                request.title(),
-                request.description(),
-                starRepository.getReferenceById(request.directorId()),
-                getReferences(starRepository, request.actorIds()),
-                getReferences(genreRepository, request.genreIds()),
-                request.durationMinutes()
-            )
-        );
+        movieRepository.save(new Movie(null, request.title(), request.description(),
+            starRepository.getReferenceById(request.directorId()), getReferences(starRepository, request.actorIds()),
+            getReferences(genreRepository, request.genreIds()), request.durationMinutes()
+        ));
     }
 
     @PutMapping("/{id}")

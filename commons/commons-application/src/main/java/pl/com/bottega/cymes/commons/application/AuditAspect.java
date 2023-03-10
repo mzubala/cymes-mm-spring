@@ -24,13 +24,9 @@ public class AuditAspect {
     @SneakyThrows
     void audit(UserCommand userCommand) {
         persistentCommandRepository.save(
-            new PersistentCommand(
-                userCommand.getUserId(),
-                objectMapper.writeValueAsString(userCommand),
-                userCommand.getClass().getName(),
-                clockProvider.now()
-            )
-        );
+            new PersistentCommand(userCommand.getUserId(), objectMapper.writeValueAsString(userCommand),
+                userCommand.getClass().getName(), clockProvider.now()
+            ));
     }
 
 }

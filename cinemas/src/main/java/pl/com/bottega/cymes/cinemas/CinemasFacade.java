@@ -19,14 +19,9 @@ public class CinemasFacade {
             throw new EntityNotFoundException("No such cinema exists");
         }
         return suspensionRepository.existsByCinemaAndFromLessThanEqualAndUntilGreaterThanEqual(
-            cinemaRepository.getReferenceById(cinemaId),
-            start,
-            start
-        ) || suspensionRepository.existsByCinemaAndFromLessThanEqualAndUntilGreaterThanEqual(
-            cinemaRepository.getReferenceById(cinemaId),
-            end,
-            end
-        );
+            cinemaRepository.getReferenceById(cinemaId), start, start)
+            || suspensionRepository.existsByCinemaAndFromLessThanEqualAndUntilGreaterThanEqual(
+            cinemaRepository.getReferenceById(cinemaId), end, end);
     }
 
     public boolean isCinemaHallSuspended(Long cinemaHallId, Instant start, Instant end) {
@@ -34,14 +29,9 @@ public class CinemasFacade {
             throw new EntityNotFoundException("No such cinema hall exists");
         }
         return suspensionRepository.existsByCinemaAndFromLessThanEqualAndUntilGreaterThanEqual(
-            cinemaRepository.getReferenceById(cinemaHallId),
-            start,
-            start
-        ) || suspensionRepository.existsByCinemaAndFromLessThanEqualAndUntilGreaterThanEqual(
-            cinemaRepository.getReferenceById(cinemaHallId),
-            end,
-            end
-        );
+            cinemaRepository.getReferenceById(cinemaHallId), start, start)
+            || suspensionRepository.existsByCinemaAndFromLessThanEqualAndUntilGreaterThanEqual(
+            cinemaRepository.getReferenceById(cinemaHallId), end, end);
     }
 
 }

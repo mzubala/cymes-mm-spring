@@ -23,16 +23,11 @@ class GlobalErrorHandlers extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-        MethodArgumentNotValidException ex,
-        HttpHeaders headers,
-        HttpStatusCode status,
-        WebRequest request
+        MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request
     ) {
         return ResponseEntity.badRequest().body(new Errors(
-            ex.getBindingResult().getFieldErrors().stream()
-                .map(GlobalErrorHandlers::toError)
-                .collect(Collectors.toList())
-        ));
+            ex.getBindingResult().getFieldErrors().stream().map(GlobalErrorHandlers::toError)
+                .collect(Collectors.toList())));
     }
 
     private static Error toError(FieldError fieldError) {

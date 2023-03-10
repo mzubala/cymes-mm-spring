@@ -20,9 +20,11 @@ class JwtTokenFilter extends OncePerRequestFilter {
     private final JwtTokenService jwtTokenService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+        HttpServletRequest request, HttpServletResponse response, FilterChain filterChain
+    ) throws ServletException, IOException {
         var authorizationHeader = request.getHeader(AUTHORIZATION);
-        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             var token = authorizationHeader.replaceFirst("Bearer ", "");
             var authentication = jwtTokenService.extractAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);

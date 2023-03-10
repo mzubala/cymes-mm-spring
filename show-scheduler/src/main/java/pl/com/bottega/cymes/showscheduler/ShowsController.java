@@ -29,9 +29,8 @@ class ShowsController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     void schedule(@Valid @RequestBody ScheduleShowRequest request) {
-        showsService.schedule(new ScheduleShowCommand(
-            request.cinemaId(), request.cinemaHallId(), request.movieId(), request.when()
-        ));
+        showsService.schedule(
+            new ScheduleShowCommand(request.cinemaId(), request.cinemaHallId(), request.movieId(), request.when()));
     }
 
     @GetMapping

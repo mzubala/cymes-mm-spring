@@ -19,7 +19,8 @@ class AuthenticationController {
 
     @PostMapping("/login")
     LoginResponse login(@Valid @RequestBody LoginRequest loginRequest) {
-        var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
+        var authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
         return new LoginResponse(jwtTokenService.generateTokenFor(authentication));
     }
 

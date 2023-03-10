@@ -7,12 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 public record MovieDto(
-    Long id,
-    String title,
-    String description,
-    Set<GenreDto> genres,
-    StarDto director,
-    List<StarDto> actors,
+    Long id, String title, String description, Set<GenreDto> genres, StarDto director, List<StarDto> actors,
     Integer durationMinutes
 ) {
 }

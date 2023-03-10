@@ -9,8 +9,6 @@ import pl.com.bottega.cymes.cinemas.dto.RowDto;
 import java.util.List;
 
 public record CreateCinemaHallRequest(
-    @NotNull Long cinemaId,
-    @NotBlank String name,
-    @NotEmpty @Valid List<RowDto> layout
+    @NotNull Long cinemaId, @NotBlank String name, @NotEmpty @Valid List<RowDto> layout
 ) {
 }

@@ -14,7 +14,7 @@ class InjectUserIdAspect {
 
     @Before(value = "execution(* *(@InjectUserId (*))) && args(userCommand)", argNames = "userCommand")
     void injectUserId(UserCommand userCommand) {
-        if(userCommand.getUserId() != null) {
+        if (userCommand.getUserId() != null) {
             return;
         }
         var authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -34,7 +34,8 @@ class RowElement {
     int capacity() {
         if (getElementKind() == RowElementKind.SEAT) {
             return 1;
-        } else {
+        }
+        else {
             return 0;
         }
     }

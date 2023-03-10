@@ -11,16 +11,10 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 
 @Entity
-@NamedQuery(
-    name = "Show.collidingShowsPresent",
-    query = "SELECT (count(s) > 0) FROM Show s WHERE " +
-        "((:ns <= s.from AND :ne >= s.until AND :ne <= s.until) OR " +
-        "(:ns <= s.from AND :ne >= s.until)  OR" +
-        "(:ns >= s.from AND :ne <= s.until) OR " +
-        "(:ns >= s.from AND :ns <= s.until AND :ne >= s.until)) AND " +
-        "s.cinemaId = :cinemaId AND " +
-        "s.cinemaHallId = :cinemaHallId"
-)
+@NamedQuery(name = "Show.collidingShowsPresent", query = "SELECT (count(s) > 0) FROM Show s WHERE "
+    + "((:ns <= s.from AND :ne >= s.until AND :ne <= s.until) OR " + "(:ns <= s.from AND :ne >= s.until)  OR"
+    + "(:ns >= s.from AND :ne <= s.until) OR " + "(:ns >= s.from AND :ns <= s.until AND :ne >= s.until)) AND "
+    + "s.cinemaId = :cinemaId AND " + "s.cinemaHallId = :cinemaHallId")
 class Show {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +25,8 @@ class Show {
     private Instant from;
     private Instant until;
 
-    protected Show() {}
+    protected Show() {
+    }
 
     Show(Long movieId, Long cinemaId, Long cinemaHallId, Instant from, Instant until) {
         this.movieId = movieId;

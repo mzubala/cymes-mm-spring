@@ -45,11 +45,13 @@ class MoviesApi extends Api {
     }
 
     Long getGenreId(String name) {
-        return getGenres().stream().filter(g -> g.name().equals(name)).findFirst().orElseThrow(IllegalArgumentException::new).id();
+        return getGenres().stream().filter(g -> g.name().equals(name)).findFirst().orElseThrow(
+            IllegalArgumentException::new).id();
     }
 
     Long getStarId(String surname) {
-        return getStars().stream().filter(s -> s.lastName().equals(surname)).findFirst().orElseThrow(IllegalArgumentException::new).id();
+        return getStars().stream().filter(s -> s.lastName().equals(surname)).findFirst().orElseThrow(
+            IllegalArgumentException::new).id();
     }
 
     @SneakyThrows

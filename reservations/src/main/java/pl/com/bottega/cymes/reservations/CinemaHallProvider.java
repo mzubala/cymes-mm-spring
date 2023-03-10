@@ -15,7 +15,7 @@ record CinemaHall(Long cinemaHallId, Map<Integer, Integer> rowNumberToSeatCount)
 
     private void ensureValidSeat(Seat seat) {
         var numberOfSeatsInRow = rowNumberToSeatCount.get(seat.rowNumber());
-        if(numberOfSeatsInRow == null || numberOfSeatsInRow < seat.seatNumber()) {
+        if (numberOfSeatsInRow == null || numberOfSeatsInRow < seat.seatNumber()) {
             throw new InvalidReservationParamsException("Seat does not exist in the cinema hall");
         }
     }

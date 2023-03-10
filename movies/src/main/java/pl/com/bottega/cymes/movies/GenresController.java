@@ -30,10 +30,7 @@ class GenresController {
 
     @PostMapping
     void create(@Valid @RequestBody CreateGenreRequest request) {
-        genreRepository.save(new Genre(
-            null,
-            request.name()
-        ));
+        genreRepository.save(new Genre(null, request.name()));
     }
 
     @PutMapping
@@ -47,8 +44,6 @@ class GenresController {
 
     @GetMapping
     List<GenreDto> getAll() {
-        return genreRepository.findAll(Sort.by("name")).stream()
-            .map(Genre::toDto)
-            .collect(toList());
+        return genreRepository.findAll(Sort.by("name")).stream().map(Genre::toDto).collect(toList());
     }
 }

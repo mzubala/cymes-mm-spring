@@ -111,7 +111,8 @@ class AuditAspectTest {
         // when
         try {
             globallyAuditedBean.doFailingWork(cmd);
-        } catch (Exception ignored) {
+        }
+        catch (Exception ignored) {
 
         }
 
@@ -122,14 +123,11 @@ class AuditAspectTest {
 
     @SneakyThrows
     private void assertCommandPersisted(UserCommand cmd) {
-        assertThat(persistentCommandRepository.findAll()).usingRecursiveFieldByFieldElementComparatorIgnoringFields("id").contains(
-            new PersistentCommand(
-                cmd.getUserId(),
-                objectMapper.writeValueAsString(cmd),
-                cmd.getClass().getName(),
+        assertThat(persistentCommandRepository.findAll()).usingRecursiveFieldByFieldElementComparatorIgnoringFields(
+            "id").contains(
+            new PersistentCommand(cmd.getUserId(), objectMapper.writeValueAsString(cmd), cmd.getClass().getName(),
                 clockProvider.now()
-            )
-        );
+            ));
     }
 
     private void assertNoCommandsPersisted() {

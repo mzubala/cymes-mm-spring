@@ -12,13 +12,9 @@ class UserFixtures {
     private final UsersApi usersApi;
     Long customerId, adminId;
 
-    RegisterUserAccountRequest admin = new RegisterUserAccountRequest(
-        "admin@admin.com", "Test9000", "Jane", "Doe"
-    );
+    RegisterUserAccountRequest admin = new RegisterUserAccountRequest("admin@admin.com", "Test9000", "Jane", "Doe");
 
-    RegisterUserAccountRequest customer = new RegisterUserAccountRequest(
-        "john@test.com", "Test123456", "John", "Doe"
-    );
+    RegisterUserAccountRequest customer = new RegisterUserAccountRequest("john@test.com", "Test123456", "John", "Doe");
 
 
     void create() {

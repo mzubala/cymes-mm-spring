@@ -6,9 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 
 public record ScheduleShowRequest(
-    @NotNull Long cinemaId,
-    @NotNull Long cinemaHallId,
-    @NotNull Long movieId,
-    @NotNull @Future Instant when
+    @NotNull Long cinemaId, @NotNull Long cinemaHallId, @NotNull Long movieId, @NotNull @Future Instant when
 ) {
 }

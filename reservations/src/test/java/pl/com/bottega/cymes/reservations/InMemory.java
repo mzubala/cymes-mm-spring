@@ -2,8 +2,10 @@ package pl.com.bottega.cymes.reservations;
 
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.SneakyThrows;
 import pl.com.bottega.cymes.showscheduler.dto.ShowDto;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -17,7 +19,7 @@ abstract class InMemoryDb<T, ID> {
 
     T get(ID id) {
         var t = db.get(id);
-        if(t == null) {
+        if (t == null) {
             throw new EntityNotFoundException();
         }
         return t;
@@ -44,7 +46,8 @@ class InMemoryShowProvider extends InMemoryDb<ShowDto, Long> implements ShowProv
     }
 }
 
-class InMemoryCustomerInformationProvider extends InMemoryDb<CustomerInformation, Long> implements CustomerInformationProvider {
+class InMemoryCustomerInformationProvider extends InMemoryDb<CustomerInformation, Long>
+    implements CustomerInformationProvider {
 
     @Override
     public CustomerInformation getByUserId(Long userId) {
@@ -57,5 +60,27 @@ class InMemoryCinemaHallProvider extends InMemoryDb<CinemaHall, Long> implements
     @Override
     public CinemaHall getById(Long cinemaHallId) {
         return get(cinemaHallId);
+    }
+}
+
+class FakePaymentFacade implements PaymentsFacade {
+
+    private StartedPayment lastStartedPayment;
+    private Money lastStartedPaymentAmount;
+
+    @SneakyThrows
+    @Override
+    public StartedPayment startPayment(UUID reservationId, Money amount) {
+        lastStartedPayment = new StartedPayment(UUID.randomUUID(), new URI("http://test.com"));
+        lastStartedPaymentAmount = amount;
+        return lastStartedPayment;
+    }
+
+    StartedPayment getLastStartedPayment() {
+        return lastStartedPayment;
+    }
+
+    Money getLastStartedPaymentAmount() {
+        return lastStartedPaymentAmount;
     }
 }

@@ -35,23 +35,16 @@ class JwtTokenService {
 
     String generateTokenFor(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        return Jwts.builder()
-            .setSubject(user.getUsername())
-            .setId(user.getId().toString())
-            .claim("roles", user.getRoles())
-            .setIssuedAt(Date.from(clockProvider.now()))
-            .setExpiration(Date.from(clockProvider.now().plus(jwtConfig.tokenExpiresAfter())))
-            .signWith(HS512, secret)
-            .compact();
+        return Jwts.builder().setSubject(user.getUsername()).setId(user.getId().toString()).claim(
+            "roles", user.getRoles()).setIssuedAt(Date.from(clockProvider.now())).setExpiration(
+            Date.from(clockProvider.now().plus(jwtConfig.tokenExpiresAfter()))).signWith(HS512, secret).compact();
     }
 
     Authentication extractAuthentication(String token) {
         var parsedToken = Jwts.parser().setSigningKey(secret).parse(token);
         var claims = (DefaultClaims) parsedToken.getBody();
         Stream<String> roles = claims.get("roles", List.class).stream();
-        return new JwtAuthentication(
-            Long.valueOf(claims.getId()),
-            claims.getSubject(),
+        return new JwtAuthentication(Long.valueOf(claims.getId()), claims.getSubject(),
             roles.map(r -> new SimpleGrantedAuthority("ROLE_" + r)).collect(Collectors.toList())
         );
     }

@@ -27,15 +27,20 @@ class RegistrationController {
 
     @PostMapping("/first-admin")
     RegisterUserAccountResponse registerFirstAdmin(@Valid @RequestBody RegisterUserAccountRequest request) {
-        if(userRepository.count() == 0) {
+        if (userRepository.count() == 0) {
             return createUser(request, UserRole.ADMIN);
-        } else {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "It's only possible to create an admin user with this endpoint when there have been no other users created yet.");
+        }
+        else {
+            throw new ResponseStatusException(
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                "It's only possible to create an admin user with this endpoint when there have been no other users created yet."
+            );
         }
     }
 
     private RegisterUserAccountResponse createUser(RegisterUserAccountRequest request, UserRole role) {
-        var user = new User(request.email(), passwordEncoder.encode(request.password()), request.firstName(), request.lastName());
+        var user = new User(
+            request.email(), passwordEncoder.encode(request.password()), request.firstName(), request.lastName());
         user.addRole(role);
         userRepository.save(user);
         return new RegisterUserAccountResponse(user.getId());

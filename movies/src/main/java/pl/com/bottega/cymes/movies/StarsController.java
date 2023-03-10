@@ -24,8 +24,7 @@ import pl.com.bottega.cymes.movies.requests.UpdateStarRequest;
 @RequestMapping("/stars")
 @RequiredArgsConstructor
 @Log
-@Valid
-class StarsController {
+@Valid class StarsController {
 
     private final StarRepository starRepository;
 
@@ -45,12 +44,9 @@ class StarsController {
 
     @GetMapping
     Page<StarDto> search(@RequestParam(required = false) String phrase, Pageable pagination) {
-        var paginationWithSort = PageRequest.of(
-            pagination.getPageNumber(),
-            pagination.getPageSize(),
+        var paginationWithSort = PageRequest.of(pagination.getPageNumber(), pagination.getPageSize(),
             pagination.getSortOr(Sort.by(Star_.LAST_NAME))
         );
-        return starRepository.findAll(StarSpecifications.byPhrase(phrase), paginationWithSort)
-            .map(Star::toDto);
+        return starRepository.findAll(StarSpecifications.byPhrase(phrase), paginationWithSort).map(Star::toDto);
     }
 }

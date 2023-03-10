@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PostgresDBExtension implements BeforeAllCallback, BeforeEachCallback, ExtensionContext.Store.CloseableResource {
-    private final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>(DockerImageName.parse("postgres:13"));
+public class PostgresDBExtension
+    implements BeforeAllCallback, BeforeEachCallback, ExtensionContext.Store.CloseableResource {
+    private final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>(
+        DockerImageName.parse("postgres:13"));
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
@@ -38,7 +40,8 @@ public class PostgresDBExtension implements BeforeAllCallback, BeforeEachCallbac
             String tableName = tables.getString("TABLE_NAME");
             tablesToTruncate.add("\"" + tableName + "\"");
         }
-        connection.prepareStatement("TRUNCATE " + tablesToTruncate.stream().collect(Collectors.joining(","))).executeUpdate();
+        connection.prepareStatement("TRUNCATE " + tablesToTruncate.stream().collect(Collectors.joining(",")))
+            .executeUpdate();
         connection.close();
     }
 

@@ -27,13 +27,11 @@ class Genre {
     public boolean equals(Object o) {
         if (this == o) return true;
 
-        if (!(o instanceof Genre))
-            return false;
+        if (!(o instanceof Genre)) return false;
 
         Genre other = (Genre) o;
 
-        return id != null &&
-            id.equals(other.getId());
+        return id != null && id.equals(other.getId());
     }
 
     @Override

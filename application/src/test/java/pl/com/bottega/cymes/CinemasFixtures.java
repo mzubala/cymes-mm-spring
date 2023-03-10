@@ -38,8 +38,7 @@ class CinemasFixtures {
     }
 
     private void createCinemas() {
-        assertSuccess(
-            cinemasApi.create(new CreateCinemaRequest("Warszawa", "Arkadia")),
+        assertSuccess(cinemasApi.create(new CreateCinemaRequest("Warszawa", "Arkadia")),
             cinemasApi.create(new CreateCinemaRequest("Wroclaw", "Magnolia")),
             cinemasApi.create(new CreateCinemaRequest("Lublin", "Plaza"))
         );
@@ -49,8 +48,7 @@ class CinemasFixtures {
     }
 
     private void createCinemaHalls() {
-        assertSuccess(
-            cinemasApi.createCinemaHall(aCreateCinemaHallRequest(lublinPlazaId).withName("H1").build()),
+        assertSuccess(cinemasApi.createCinemaHall(aCreateCinemaHallRequest(lublinPlazaId).withName("H1").build()),
             cinemasApi.createCinemaHall(aCreateCinemaHallRequest(lublinPlazaId).withName("H2").build()),
             cinemasApi.createCinemaHall(aCreateCinemaHallRequest(warszawaArkadiaId).withName("H1").build()),
             cinemasApi.createCinemaHall(aCreateCinemaHallRequest(wroclawMagnoliaId).withName("H1").build())
@@ -79,11 +77,9 @@ class CreateCinemaHallRequestExample {
     }
 
     CreateCinemaHallRequest build() {
-        return new CreateCinemaHallRequest(cinemaId, name,
-            IntStream.range(1, rowsNumber + 1)
-                .mapToObj(rowsNumber -> new RowDto(rowsNumber, IntStream.range(1, seatsPerRow + 1)
-                    .mapToObj(seatNumber -> new RowElementDto(seatNumber - 1, seatNumber, RowElementKind.SEAT))
-                    .collect(Collectors.toList())
-                )).collect(Collectors.toList()));
+        return new CreateCinemaHallRequest(cinemaId, name, IntStream.range(1, rowsNumber + 1)
+            .mapToObj(rowsNumber -> new RowDto(rowsNumber, IntStream.range(1, seatsPerRow + 1)
+                .mapToObj(seatNumber -> new RowElementDto(seatNumber - 1, seatNumber, RowElementKind.SEAT))
+                .collect(Collectors.toList()))).collect(Collectors.toList()));
     }
 }

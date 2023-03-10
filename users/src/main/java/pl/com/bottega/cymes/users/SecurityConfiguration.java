@@ -26,20 +26,18 @@ class SecurityConfiguration {
 
     @Bean
     @SneakyThrows
-    SecurityFilterChain securityFilterChain(HttpSecurity http, JwtTokenFilter jwtTokenFilter, AuthenticationManager authenticationManager) {
-        return http
-            .csrf().disable()
-            .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authenticationManager(authenticationManager)
-            .addFilterBefore(
-                jwtTokenFilter,
-                UsernamePasswordAuthenticationFilter.class
-            )
-            .build();
+    SecurityFilterChain securityFilterChain(
+        HttpSecurity http, JwtTokenFilter jwtTokenFilter, AuthenticationManager authenticationManager
+    ) {
+        return http.csrf().disable().sessionManagement(
+            config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).authenticationManager(
+            authenticationManager).addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
 
     @Bean
-    DaoAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    DaoAuthenticationProvider authenticationProvider(
+        UserDetailsService userDetailsService, PasswordEncoder passwordEncoder
+    ) {
         var provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder);
         provider.setUserDetailsService(userDetailsService);
@@ -53,7 +51,8 @@ class SecurityConfiguration {
 
     @Bean
     UserDetailsService userDetailsService(UserRepository userRepository) {
-        return (username) -> userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException(username));
+        return (username) -> userRepository.findByEmail(username).orElseThrow(
+            () -> new UsernameNotFoundException(username));
     }
 
     @Bean

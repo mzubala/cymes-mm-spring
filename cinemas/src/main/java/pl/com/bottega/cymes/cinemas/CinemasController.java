@@ -49,7 +49,8 @@ public class CinemasController {
     @PostMapping("/{id}/suspensions")
     @PreAuthorize("hasRole('ADMIN')")
     public void suspend(@PathVariable("id") Long cinemaId, @Valid @RequestBody SuspendRequest suspendRequest) {
-        suspensionRepository.save(new Suspension(cinemaRepository.getReferenceById(cinemaId), suspendRequest.from(), suspendRequest.until()));
+        suspensionRepository.save(
+            new Suspension(cinemaRepository.getReferenceById(cinemaId), suspendRequest.from(), suspendRequest.until()));
     }
 
     @DeleteMapping("/suspensions/{id}")
@@ -63,16 +64,15 @@ public class CinemasController {
     @GetMapping("/{cinemaId}/suspensions")
     @PreAuthorize("hasRole('ADMIN')")
     public List<SuspensionDto> getSuspensions(@PathVariable("cinemaId") Long cinemaId) {
-        return suspensionRepository.findByCinemaOrderByFromAscUntilAsc(SuspensionDto.class, cinemaRepository.getReferenceById(cinemaId));
+        return suspensionRepository.findByCinemaOrderByFromAscUntilAsc(
+            SuspensionDto.class, cinemaRepository.getReferenceById(cinemaId));
     }
 
     @GetMapping("/{cinemaId}/suspensions/check")
     @PreAuthorize("hasRole('ADMIN')")
     public SuspensionCheckDto suspensionCheck(@PathVariable("cinemaId") Long cinemaId, @RequestParam("at") Instant at) {
         return new SuspensionCheckDto(suspensionRepository.existsByCinemaAndFromLessThanEqualAndUntilGreaterThanEqual(
-            cinemaRepository.getReferenceById(cinemaId),
-            at, at
-        ));
+            cinemaRepository.getReferenceById(cinemaId), at, at));
     }
 
     @GetMapping("/{id}")
@@ -81,22 +81,23 @@ public class CinemasController {
     public DetailedCinemaInfoDto get(@PathVariable("id") Long cinemaId, @RequestParam("at") Instant at) {
         var cinema = cinemaRepository.getReferenceById(cinemaId);
         var halls = cinemaHallRepository.findByCinema(cinema);
-        var suspensions = suspensionRepository.findByCinemaHallInAndFromLessThanEqualAndUntilGreaterThanEqual(halls, at, at);
-        return new DetailedCinemaInfoDto(
-            cinema.getId(),
-            cinema.getName(),
-            cinema.getCity(),
+        var suspensions = suspensionRepository.findByCinemaHallInAndFromLessThanEqualAndUntilGreaterThanEqual(
+            halls, at, at);
+        return new DetailedCinemaInfoDto(cinema.getId(), cinema.getName(), cinema.getCity(),
             toBasicCinemaHallInfoDto(halls, suspensions),
             suspensionRepository.existsByCinemaAndFromLessThanEqualAndUntilGreaterThanEqual(cinema, at, at)
         );
     }
 
-    private static List<BasicCinemaHallInfoDto> toBasicCinemaHallInfoDto(List<CinemaHall> halls, List<Suspension> suspensions) {
+    private static List<BasicCinemaHallInfoDto> toBasicCinemaHallInfoDto(
+        List<CinemaHall> halls, List<Suspension> suspensions
+    ) {
         return halls.stream().map(hall -> toBasicCinemaHallInfoDto(suspensions, hall)).collect(toList());
     }
 
     private static BasicCinemaHallInfoDto toBasicCinemaHallInfoDto(List<Suspension> suspensions, CinemaHall hall) {
-        return new BasicCinemaHallInfoDto(hall.getId(), hall.getName(), hall.getCapacity(), isSuspended(suspensions, hall));
+        return new BasicCinemaHallInfoDto(
+            hall.getId(), hall.getName(), hall.getCapacity(), isSuspended(suspensions, hall));
     }
 
     private static boolean isSuspended(List<Suspension> suspensions, CinemaHall hall) {

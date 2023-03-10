@@ -6,11 +6,14 @@ import lombok.With;
 import pl.com.bottega.cymes.commons.test.Faker;
 import pl.com.bottega.cymes.showscheduler.dto.ShowDto;
 
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static pl.com.bottega.cymes.reservations.RecipeCalculatorFixtures.defaultReceiptCalculator;
 import static pl.com.bottega.cymes.reservations.ShowDtoBuilder.aShowDto;
 
 @With
@@ -22,15 +25,20 @@ class ReservationBuilder {
     Map<TicketKind, Integer> ticketCounts = Map.of(TicketKind.REGULAR, 2);
     Set<Seat> seats = Set.of(new Seat(10, 10), new Seat(10, 11));
 
+    ReceiptCalculator receiptCalculator = defaultReceiptCalculator();
+
     static ReservationBuilder aReservation() {
         return new ReservationBuilder();
     }
 
     Reservation build() {
-        if(customerInformation == null) {
-            return new Reservation(showDto == null ? null : showDto.build(), ticketCounts, seats);
-        } else {
-            return new Reservation(showDto.build(), customerInformation == null ? null : customerInformation.build(), ticketCounts, seats);
+        if (customerInformation == null) {
+            return new Reservation(showDto == null ? null : showDto.build(), ticketCounts, seats, receiptCalculator);
+        }
+        else {
+            return new Reservation(showDto.build(), customerInformation == null ? null : customerInformation.build(),
+                ticketCounts, seats, receiptCalculator
+            );
         }
     }
 }
@@ -79,6 +87,7 @@ class CustomerInformationBuilder {
 class CinemaHallBuilder {
     Long cinemaHallId = 1L;
     Map<Integer, Integer> rowNumberToSeatCount = new HashMap<>();
+
     static CinemaHallBuilder aCinemaHall() {
         var builder = new CinemaHallBuilder();
         builder.rowNumberToSeatCount.put(1, 10);
@@ -93,5 +102,13 @@ class CinemaHallBuilder {
 
     CinemaHall build() {
         return new CinemaHall(cinemaHallId, rowNumberToSeatCount);
+    }
+}
+
+class RecipeCalculatorFixtures {
+    static ReceiptCalculator defaultReceiptCalculator() {
+        Map<TicketKind, BigDecimal> priceMap = new HashMap<>();
+        Arrays.stream(TicketKind.values()).forEach((v) -> priceMap.put(v, BigDecimal.TEN));
+        return new SimpleReceiptCalculator(priceMap);
     }
 }

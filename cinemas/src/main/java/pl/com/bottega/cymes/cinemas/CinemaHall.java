@@ -18,11 +18,9 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Getter
-@Table(
-    indexes = {
-        @Index(unique = true, columnList = "name, cinema_id")
-    }
-)
+@Table(indexes = {
+    @Index(unique = true, columnList = "name, cinema_id")
+})
 @NoArgsConstructor
 class CinemaHall {
     @Id

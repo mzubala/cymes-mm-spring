@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public record RowDto(
-    @NotNull Integer number,
-    @Valid @NotEmpty List<RowElementDto> elements
+    @NotNull Integer number, @Valid @NotEmpty List<RowElementDto> elements
 ) {
 }

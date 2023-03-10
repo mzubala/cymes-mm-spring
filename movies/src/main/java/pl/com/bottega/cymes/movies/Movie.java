@@ -39,14 +39,8 @@ class Movie {
     private Integer durationMinutes;
 
     MovieDto toDto() {
-        return new MovieDto(
-            id,
-            title,
-            description,
-            genres.stream().map(Genre::toDto).collect(Collectors.toSet()),
-            director.toDto(),
-            actors.stream().map(Star::toDto).collect(Collectors.toList()),
-            durationMinutes
+        return new MovieDto(id, title, description, genres.stream().map(Genre::toDto).collect(Collectors.toSet()),
+            director.toDto(), actors.stream().map(Star::toDto).collect(Collectors.toList()), durationMinutes
         );
     }
 }

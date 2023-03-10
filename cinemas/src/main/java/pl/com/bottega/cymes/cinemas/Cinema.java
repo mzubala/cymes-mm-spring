@@ -12,11 +12,9 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Getter
-@Table(
-    indexes = {
-        @Index(columnList = "city, name", unique = true)
-    }
-)
+@Table(indexes = {
+    @Index(columnList = "city, name", unique = true)
+})
 @NoArgsConstructor
 class Cinema {
     @Id

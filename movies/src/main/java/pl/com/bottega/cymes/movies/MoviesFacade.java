@@ -19,7 +19,7 @@ public class MoviesFacade {
 
     public List<MovieDto> getMovies(Iterable<Long> ids) {
         var movies = movieRepository.findByIdIn(ids, MovieDto.class);
-        if(movies.size() != Iterables.size(ids)) {
+        if (movies.size() != Iterables.size(ids)) {
             throw new EntityNotFoundException("At least one movie id is invalid");
         }
         return movies;

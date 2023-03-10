@@ -13,7 +13,7 @@ class StarSpecifications {
 
     static Specification<Star> byFirstnameLike(String phrase) {
         return (root, query, criteriaBuilder) -> {
-            if(phrase == null) {
+            if (phrase == null) {
                 return null;
             }
             var likeExpr = "%" + phrase.toLowerCase() + "%";
@@ -23,7 +23,7 @@ class StarSpecifications {
 
     static Specification<Star> byLastnameLike(String phrase) {
         return (root, query, criteriaBuilder) -> {
-            if(phrase == null) {
+            if (phrase == null) {
                 return null;
             }
             var likeExpr = "%" + phrase.toLowerCase() + "%";

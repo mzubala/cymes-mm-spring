@@ -41,9 +41,7 @@ class CinemaHallsController {
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     void create(@Valid @RequestBody CreateCinemaHallRequest request) {
-        cinemaHallRepository.save(new CinemaHall(
-            cinemaRepository.getReferenceById(request.cinemaId()),
-            request.name(),
+        cinemaHallRepository.save(new CinemaHall(cinemaRepository.getReferenceById(request.cinemaId()), request.name(),
             toRows(request.layout())
         ));
     }
@@ -52,9 +50,7 @@ class CinemaHallsController {
     DetailedCinemaHallInfoDto get(@PathVariable("hallId") Long cinemaHallId) {
         var cinemaHall = cinemaHallRepository.getReferenceById(cinemaHallId);
         Instant now = Instant.now();
-        return new DetailedCinemaHallInfoDto(
-            cinemaHallId, cinemaHall.getName(),
-            cinemaHall.getCapacity(),
+        return new DetailedCinemaHallInfoDto(cinemaHallId, cinemaHall.getName(), cinemaHall.getCapacity(),
             toRowDtos(cinemaHall),
             suspensionRepository.existsByCinemaHallAndFromLessThanEqualAndUntilGreaterThanEqual(cinemaHall, now, now)
         );
@@ -64,17 +60,17 @@ class CinemaHallsController {
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     void suspend(@PathVariable("hallId") Long hallId, @Valid @RequestBody SuspendRequest suspendRequest) {
-        suspensionRepository.save(new Suspension(
-            cinemaHallRepository.getReferenceById(hallId),
-            suspendRequest.from(),
-            suspendRequest.until())
-        );
+        suspensionRepository.save(new Suspension(cinemaHallRepository.getReferenceById(hallId), suspendRequest.from(),
+            suspendRequest.until()
+        ));
     }
 
     @PutMapping("/{hallId}")
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    void update(@PathVariable("hallId") Long hallId, @Valid @RequestBody UpdateCinemaHallRequest updateCinemaHallRequest) {
+    void update(
+        @PathVariable("hallId") Long hallId, @Valid @RequestBody UpdateCinemaHallRequest updateCinemaHallRequest
+    ) {
         var hall = cinemaHallRepository.getReferenceById(hallId);
         hall.setRows(toRows(updateCinemaHallRequest.layout()));
     }
@@ -83,7 +79,8 @@ class CinemaHallsController {
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ADMIN')")
     List<SuspensionDto> getSuspensions(@PathVariable("hallId") Long hallId) {
-        return suspensionRepository.findByCinemaHallOrderByFromAscUntilAsc(SuspensionDto.class, cinemaHallRepository.getReferenceById(hallId));
+        return suspensionRepository.findByCinemaHallOrderByFromAscUntilAsc(
+            SuspensionDto.class, cinemaHallRepository.getReferenceById(hallId));
     }
 
     @GetMapping("/{hallId}/suspensions/check")
@@ -91,32 +88,27 @@ class CinemaHallsController {
     @PreAuthorize("hasRole('ADMIN')")
     SuspensionCheckDto suspensionCheck(@PathVariable("hallId") Long hallId, @RequestParam("at") Instant at) {
         return new SuspensionCheckDto(
-            suspensionRepository.existsByCinemaHallAndFromLessThanEqualAndUntilGreaterThanEqual(cinemaHallRepository.getReferenceById(hallId), at, at)
-        );
+            suspensionRepository.existsByCinemaHallAndFromLessThanEqualAndUntilGreaterThanEqual(
+                cinemaHallRepository.getReferenceById(hallId), at, at));
     }
 
     private static List<RowElement> toRowElements(RowDto rowDto) {
-        return rowDto.elements().stream().map(rowElementDto -> new RowElement(rowElementDto.number(), rowElementDto.kind())).collect(toList());
+        return rowDto.elements().stream().map(
+            rowElementDto -> new RowElement(rowElementDto.number(), rowElementDto.kind())).collect(toList());
     }
 
     private static List<RowElementDto> toRowElementDtos(Row row) {
-        return Streams.mapWithIndex(
-            row.getElements().stream(),
+        return Streams.mapWithIndex(row.getElements().stream(),
             (element, index) -> new RowElementDto((int) index, element.getNumber(), element.getElementKind())
         ).collect(toList());
     }
 
     static List<RowDto> toRowDtos(CinemaHall cinemaHall) {
-        return cinemaHall.getRows().stream().map(row -> new RowDto(
-            row.getNumber(),
-            toRowElementDtos(row)
-        )).collect(toList());
+        return cinemaHall.getRows().stream().map(row -> new RowDto(row.getNumber(), toRowElementDtos(row))).collect(
+            toList());
     }
 
     private static List<Row> toRows(List<RowDto> layout) {
-        return layout.stream().map(rowDto -> new Row(
-            rowDto.number(),
-            toRowElements(rowDto)
-        )).collect(toList());
+        return layout.stream().map(rowDto -> new Row(rowDto.number(), toRowElements(rowDto))).collect(toList());
     }
 }

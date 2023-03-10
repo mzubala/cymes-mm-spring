@@ -81,8 +81,13 @@ Content-Type: application/json
 {
   "title": "The Godfellas",
   "description": "Kilkunastoletni Henry i Tommy DeVito trafiają pod opiekę potężnego gangstera. Obaj szybko uczą się panujących w mafii reguł.",
-  "genreIds": [1, 2],
-  "actorIds": [100],
+  "genreIds": [
+    1,
+    2
+  ],
+  "actorIds": [
+    100
+  ],
   "directorId": 2,
   "durationMinutes": 120
 }
@@ -95,8 +100,13 @@ Content-Type: application/json
 {
   "title": "The Godfellas",
   "description": "Kilkunastoletni Henry i Tommy DeVito trafiają pod opiekę potężnego gangstera. Obaj szybko uczą się panujących w mafii reguł.",
-  "genreIds": [1, 2],
-  "actorIds": [1],
+  "genreIds": [
+    1,
+    2
+  ],
+  "actorIds": [
+    1
+  ],
   "directorId": 2,
   "durationMinutes": 120
 }
