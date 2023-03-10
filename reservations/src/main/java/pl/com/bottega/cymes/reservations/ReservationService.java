@@ -42,14 +42,19 @@ class ReservationService {
         return reservation.getId();
     }
 
-    @Transactional
     StartedPayment startOnlinePayment(StartPaymentCommand command) {
-        return null;
+        var reservation = reservationRepository.getReferenceById(command.reservationId());
+        var startedPayment = paymentsFacade.startPayment(reservation.getId(), reservation.getReceipt().getTotal());
+        reservation.startOnlinePayment(startedPayment.id(), command.anonymousCustomerInformation(), command.registeredCustomerInformation());
+        reservationRepository.save(reservation);
+        return startedPayment;
     }
 
     @Transactional
-    void selectOnsitePayment(StartPaymentCommand command) {
-
+    void startOnsitePayment(StartPaymentCommand command) {
+        var reservation = reservationRepository.getReferenceById(command.reservationId());
+        reservation.startOnsitePayment(command.anonymousCustomerInformation(), command.registeredCustomerInformation());
+        reservationRepository.save(reservation);
     }
 }
 

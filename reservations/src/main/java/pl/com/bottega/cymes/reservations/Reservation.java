@@ -1,5 +1,7 @@
 package pl.com.bottega.cymes.reservations;
 
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
@@ -9,6 +11,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Transient;
+import pl.com.bottega.cymes.reservations.StartPaymentCommand.AnonymousCustomerInformation;
+import pl.com.bottega.cymes.reservations.StartPaymentCommand.RegisteredCustomerInformation;
 import pl.com.bottega.cymes.showscheduler.dto.ShowDto;
 
 import java.util.HashMap;
@@ -20,6 +24,8 @@ import java.util.stream.Collectors;
 
 import static jakarta.persistence.CascadeType.ALL;
 import static pl.com.bottega.cymes.reservations.ReservationStatus.SEATS_RESERVED;
+import static pl.com.bottega.cymes.reservations.ReservationStatus.WAITING_ONLINE_PAYMENT;
+import static pl.com.bottega.cymes.reservations.ReservationStatus.WAITING_ONSITE_PAYMENT;
 
 @Entity
 class Reservation {
@@ -113,10 +119,46 @@ class Reservation {
     }
 
     Payment getPayment() {
-        return null;
+        return payment;
     }
 
-    private void checkParameter(boolean expression, String errorMessage) {
+    CustomerInformation getCustomerInfromation() {
+        if (customerInformation == null) {
+            return null;
+        }
+        return customerInformation.export();
+    }
+
+    void startOnlinePayment(
+        String externalPaymentId, AnonymousCustomerInformation anonymousCustomerInformation,
+        RegisteredCustomerInformation registeredCustomerInformation
+    ) {
+        checkStatus(SEATS_RESERVED);
+        payment = Payment.createOnlinePayment(this, externalPaymentId);
+        updateCustomerInformation(anonymousCustomerInformation, registeredCustomerInformation);
+        status = WAITING_ONLINE_PAYMENT;
+    }
+
+    void startOnsitePayment(
+        AnonymousCustomerInformation anonymousCustomerInformation, RegisteredCustomerInformation registeredCustomerInformation
+    ) {
+        checkStatus(SEATS_RESERVED);
+        payment = Payment.createOnsitePayment(this);
+        updateCustomerInformation(anonymousCustomerInformation, registeredCustomerInformation);
+        status = WAITING_ONSITE_PAYMENT;
+    }
+
+    private void updateCustomerInformation(
+        AnonymousCustomerInformation anonymousCustomerInformation,
+        RegisteredCustomerInformation registeredCustomerInformation
+    ) {
+        if (customerInformation == null) {
+            customerInformation = new CustomerInformationEmbeddable();
+        }
+        customerInformation.update(anonymousCustomerInformation, registeredCustomerInformation);
+    }
+
+    private static void checkParameter(boolean expression, String errorMessage) {
         if (!expression) {
             throw new InvalidReservationParamsException(errorMessage);
         }
@@ -148,8 +190,15 @@ class Reservation {
         );
     }
 
-    CustomerInformation getCustomerInfromation() {
-        return null;
+    private void checkStatus(ReservationStatus requiredStatus) {
+        if (status != requiredStatus) {
+            throw new IllegalReservationOperationException(
+                "Reservation status is illegal to perform desired operation " + requiredStatus);
+        }
+    }
+
+    private boolean isAnonymous() {
+        return customerInformation.isAnonymous();
     }
 
     @Embeddable
@@ -172,6 +221,7 @@ class Reservation {
     }
 
     @Embeddable
+    @Access(AccessType.FIELD)
     static class CustomerInformationEmbeddable {
         private Long userId;
         private String firstName;
@@ -189,6 +239,39 @@ class Reservation {
             phoneNumber = customerInformation.phoneNumber();
             email = customerInformation.email();
         }
+
+        boolean isAnonymous() {
+            return userId == null;
+        }
+
+        void update(
+            AnonymousCustomerInformation anonymousCustomerInformation,
+            RegisteredCustomerInformation registeredCustomerInformation
+        ) {
+            if (isAnonymous()) {
+                update(anonymousCustomerInformation);
+            }
+            else {
+                update(registeredCustomerInformation);
+            }
+        }
+
+        private void update(RegisteredCustomerInformation customerInformation) {
+            checkParameter(customerInformation != null, "Missing anonymous customer information");
+            phoneNumber = customerInformation.phoneNumber();
+        }
+
+        private void update(AnonymousCustomerInformation customerInformation) {
+            checkParameter(customerInformation != null, "Missing anonymous customer information");
+            firstName = customerInformation.firstName();
+            lastName = customerInformation.lastName();
+            phoneNumber = customerInformation.phoneNumber();
+            email = customerInformation.email();
+        }
+
+        CustomerInformation export() {
+            return new CustomerInformation(userId, firstName, lastName, phoneNumber, email);
+        }
     }
 }
 
@@ -198,6 +281,12 @@ enum ReservationStatus {
 
 class InvalidReservationParamsException extends RuntimeException {
     InvalidReservationParamsException(String message) {
+        super(message);
+    }
+}
+
+class IllegalReservationOperationException extends RuntimeException {
+    IllegalReservationOperationException(String message) {
         super(message);
     }
 }

@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static pl.com.bottega.cymes.reservations.CustomerInformationBuilder.aCustomerInformation;
 import static pl.com.bottega.cymes.reservations.RecipeCalculatorFixtures.defaultReceiptCalculator;
 import static pl.com.bottega.cymes.reservations.ShowDtoBuilder.aShowDto;
 
@@ -29,6 +30,14 @@ class ReservationBuilder {
 
     static ReservationBuilder aReservation() {
         return new ReservationBuilder();
+    }
+
+    ReservationBuilder anonymous() {
+        return withCustomerInformation(null);
+    }
+
+    ReservationBuilder nonAnonymous() {
+        return withCustomerInformation(aCustomerInformation());
     }
 
     Reservation build() {
