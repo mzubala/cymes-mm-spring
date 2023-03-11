@@ -5,16 +5,25 @@ import jakarta.persistence.AccessType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import pl.com.bottega.cymes.reservations.StartPaymentCommand.AnonymousCustomerInformation;
 import pl.com.bottega.cymes.reservations.StartPaymentCommand.RegisteredCustomerInformation;
 import pl.com.bottega.cymes.showscheduler.dto.ShowDto;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,8 +46,8 @@ class Reservation {
     @ElementCollection
     private Map<TicketKind, Integer> ticketCounts = new HashMap<>();
 
-    @ElementCollection
-    private Set<SeatEmbeddable> seats = new HashSet<>();
+    @OneToMany(mappedBy = "reservation", cascade = {ALL}, orphanRemoval = true)
+    private Set<ReservedSeat> seats = new HashSet<>();
 
     @Embedded
     private CustomerInformationEmbeddable customerInformation;
@@ -75,12 +84,13 @@ class Reservation {
         ShowDto showDto, CustomerInformationEmbeddable customerInformation, Map<TicketKind, Integer> ticketCounts,
         Set<Seat> seats, ReceiptCalculator receiptCalculator
     ) {
+        this.id = UUID.randomUUID();
         this.receiptCalculator = receiptCalculator;
         validateParameters(showDto, customerInformation, ticketCounts, seats);
         this.showId = showDto.showId();
         this.customerInformation = customerInformation;
         this.ticketCounts.putAll(ticketCounts);
-        this.seats.addAll(seats.stream().map(SeatEmbeddable::new).toList());
+        this.seats.addAll(seats.stream().map(s -> new ReservedSeat(this, s)).toList());
         this.status = SEATS_RESERVED;
         this.receipt = receiptCalculator.calculate(this);
     }
@@ -103,7 +113,7 @@ class Reservation {
     }
 
     Set<Seat> getSeats() {
-        return seats.stream().map(SeatEmbeddable::toSeat).collect(Collectors.toSet());
+        return seats.stream().map(ReservedSeat::toSeat).collect(Collectors.toSet());
     }
 
     UUID getId() {
@@ -140,7 +150,8 @@ class Reservation {
     }
 
     void startOnsitePayment(
-        AnonymousCustomerInformation anonymousCustomerInformation, RegisteredCustomerInformation registeredCustomerInformation
+        AnonymousCustomerInformation anonymousCustomerInformation,
+        RegisteredCustomerInformation registeredCustomerInformation
     ) {
         checkStatus(SEATS_RESERVED);
         payment = Payment.createOnsitePayment(this);
@@ -201,23 +212,43 @@ class Reservation {
         return customerInformation.isAnonymous();
     }
 
-    @Embeddable
-    static class SeatEmbeddable {
+    @Entity
+    @Table(name = "reserved_seats", indexes = {
+        @Index(name = "unique_seats_per_show", unique = true, columnList = "showId,rowNumber,seatNumber")
+    })
+    static class ReservedSeat {
 
-        private int rowNumber;
-        private int seatNumber;
+        @EmbeddedId
+        private ReservedSeatId id;
 
-        SeatEmbeddable(Seat seat) {
-            this.rowNumber = seat.rowNumber();
-            this.seatNumber = seat.seatNumber();
+        private Long showId;
+
+        @ManyToOne
+        @MapsId("reservationId")
+        private Reservation reservation;
+
+        ReservedSeat(Reservation reservation, Seat seat) {
+            this.reservation = reservation;
+            this.showId = reservation.getShowId();
+            this.id = new ReservedSeatId(reservation.getId(), seat.rowNumber(), seat.seatNumber());
         }
 
-        protected SeatEmbeddable() {
+        protected ReservedSeat() {
         }
 
         Seat toSeat() {
-            return new Seat(rowNumber, seatNumber);
+            return new Seat(id.rowNumber, id.seatNumber);
         }
+    }
+
+    @Embeddable
+    @AllArgsConstructor
+    @NoArgsConstructor
+    static class ReservedSeatId implements Serializable {
+
+        private UUID reservationId;
+        private Integer rowNumber;
+        private Integer seatNumber;
     }
 
     @Embeddable

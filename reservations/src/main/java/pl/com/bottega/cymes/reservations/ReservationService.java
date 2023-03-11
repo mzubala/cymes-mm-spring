@@ -66,7 +66,7 @@ class ReservationService {
         var reservation = reservationRepository.getReferenceById(id);
         var showDto = showProvider.getShow(reservation.getShowId());
         return new ReservationDto(
-            id, reservation.getShowId(), reservation.getShowId(), showDto.cinemaHallId(), reservation.getStatus(), reservation.getTicketCounts(),
+            id, reservation.getShowId(), showDto.cinemaId(), showDto.cinemaHallId(), reservation.getStatus(), reservation.getTicketCounts(),
             reservation.getSeats(), reservation.getReceipt().toDto(), reservation.getCustomerInfromation()
         );
     }

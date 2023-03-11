@@ -15,7 +15,7 @@ class ReservationsApi extends Api {
         super(mockMvc, objectMapper);
     }
 
-    ResultActions createReservation(CreateReservationRequest request) {
+    ExtendedResultActions createReservation(CreateReservationRequest request) {
         return post("/reservations", request);
     }
 
