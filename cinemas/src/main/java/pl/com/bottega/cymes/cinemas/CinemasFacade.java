@@ -3,6 +3,7 @@ package pl.com.bottega.cymes.cinemas;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import pl.com.bottega.cymes.cinemas.dto.DetailedCinemaHallInfoDto;
 
 import java.time.Instant;
 
@@ -13,6 +14,8 @@ public class CinemasFacade {
     private final CinemaRepository cinemaRepository;
     private final CinemaHallRepository cinemaHallRepository;
     private final SuspensionRepository suspensionRepository;
+
+    private final CinemaHallsController cinemaHallsController;
 
     public boolean isCinemaSuspended(Long cinemaId, Instant start, Instant end) {
         if (!cinemaRepository.existsById(cinemaId)) {
@@ -34,4 +37,7 @@ public class CinemasFacade {
             cinemaRepository.getReferenceById(cinemaHallId), end, end);
     }
 
+    public DetailedCinemaHallInfoDto getCinemaHall(Long cinemaHallId) {
+        return cinemaHallsController.get(cinemaHallId);
+    }
 }

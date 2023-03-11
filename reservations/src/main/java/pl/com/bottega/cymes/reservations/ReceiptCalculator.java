@@ -17,7 +17,7 @@ class SimpleReceiptCalculator implements ReceiptCalculator {
 
     private final Map<TicketKind, BigDecimal> ticketPrices;
 
-    SimpleReceiptCalculator(@Value("${ticket-prices}") Map<TicketKind, BigDecimal> ticketPrices) {
+    SimpleReceiptCalculator(@Value("#{${ticket-prices}}") Map<TicketKind, BigDecimal> ticketPrices) {
         this.ticketPrices = ticketPrices;
     }
 

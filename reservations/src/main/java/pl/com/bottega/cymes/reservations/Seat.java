@@ -1,4 +1,4 @@
 package pl.com.bottega.cymes.reservations;
 
-record Seat(int rowNumber, int seatNumber) {
+public record Seat(int rowNumber, int seatNumber) {
 }

@@ -7,6 +7,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import pl.com.bottega.cymes.sharedkernel.UserCommand;
 
+import static pl.com.bottega.cymes.commons.application.AuthenticationUtils.getUserId;
+
 @Aspect
 @Component
 @Order(0)
@@ -18,10 +20,7 @@ class InjectUserIdAspect {
             return;
         }
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            var userId = (Long) authentication.getPrincipal();
-            userCommand.setUserId(userId);
-        }
+        userCommand.setUserId(getUserId(authentication));
     }
 
 }

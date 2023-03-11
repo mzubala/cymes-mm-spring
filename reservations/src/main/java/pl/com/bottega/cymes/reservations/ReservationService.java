@@ -1,13 +1,17 @@
 package pl.com.bottega.cymes.reservations;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import pl.com.bottega.cymes.reservations.dto.ReceiptDto;
+import pl.com.bottega.cymes.reservations.dto.ReservationDto;
 import pl.com.bottega.cymes.sharedkernel.ClockProvider;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+@Component
 @RequiredArgsConstructor
 class ReservationService {
 
@@ -55,6 +59,16 @@ class ReservationService {
         var reservation = reservationRepository.getReferenceById(command.reservationId());
         reservation.startOnsitePayment(command.anonymousCustomerInformation(), command.registeredCustomerInformation());
         reservationRepository.save(reservation);
+    }
+
+    @Transactional(readOnly = true)
+    ReservationDto getReservation(UUID id) {
+        var reservation = reservationRepository.getReferenceById(id);
+        var showDto = showProvider.getShow(reservation.getShowId());
+        return new ReservationDto(
+            id, reservation.getShowId(), reservation.getShowId(), showDto.cinemaHallId(), reservation.getStatus(), reservation.getTicketCounts(),
+            reservation.getSeats(), reservation.getReceipt().toDto(), reservation.getCustomerInfromation()
+        );
     }
 }
 

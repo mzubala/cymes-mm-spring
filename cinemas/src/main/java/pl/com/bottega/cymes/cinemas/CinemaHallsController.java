@@ -26,6 +26,7 @@ import java.time.Instant;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static pl.com.bottega.cymes.cinemas.CinemaHallsService.toRows;
 
 @RestController
 @RequestMapping("/halls")
@@ -36,6 +37,8 @@ class CinemaHallsController {
     private final CinemaRepository cinemaRepository;
 
     private final SuspensionRepository suspensionRepository;
+
+    private final CinemaHallsService cinemaHallsService;
 
     @PostMapping
     @Transactional
@@ -48,12 +51,7 @@ class CinemaHallsController {
 
     @GetMapping("/{hallId}")
     DetailedCinemaHallInfoDto get(@PathVariable("hallId") Long cinemaHallId) {
-        var cinemaHall = cinemaHallRepository.getReferenceById(cinemaHallId);
-        Instant now = Instant.now();
-        return new DetailedCinemaHallInfoDto(cinemaHallId, cinemaHall.getName(), cinemaHall.getCapacity(),
-            toRowDtos(cinemaHall),
-            suspensionRepository.existsByCinemaHallAndFromLessThanEqualAndUntilGreaterThanEqual(cinemaHall, now, now)
-        );
+        return cinemaHallsService.getDetailedCinemaHallInfoDto(cinemaHallId, this);
     }
 
     @PostMapping("/{hallId}/suspensions")
@@ -90,25 +88,5 @@ class CinemaHallsController {
         return new SuspensionCheckDto(
             suspensionRepository.existsByCinemaHallAndFromLessThanEqualAndUntilGreaterThanEqual(
                 cinemaHallRepository.getReferenceById(hallId), at, at));
-    }
-
-    private static List<RowElement> toRowElements(RowDto rowDto) {
-        return rowDto.elements().stream().map(
-            rowElementDto -> new RowElement(rowElementDto.number(), rowElementDto.kind())).collect(toList());
-    }
-
-    private static List<RowElementDto> toRowElementDtos(Row row) {
-        return Streams.mapWithIndex(row.getElements().stream(),
-            (element, index) -> new RowElementDto((int) index, element.getNumber(), element.getElementKind())
-        ).collect(toList());
-    }
-
-    static List<RowDto> toRowDtos(CinemaHall cinemaHall) {
-        return cinemaHall.getRows().stream().map(row -> new RowDto(row.getNumber(), toRowElementDtos(row))).collect(
-            toList());
-    }
-
-    private static List<Row> toRows(List<RowDto> layout) {
-        return layout.stream().map(rowDto -> new Row(rowDto.number(), toRowElements(rowDto))).collect(toList());
     }
 }

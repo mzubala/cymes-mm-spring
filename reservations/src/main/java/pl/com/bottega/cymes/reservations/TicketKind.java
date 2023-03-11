@@ -1,5 +1,5 @@
 package pl.com.bottega.cymes.reservations;
 
-enum TicketKind {
+public enum TicketKind {
     JUNIOR, REGULAR, STUDENT, SENIOR
 }

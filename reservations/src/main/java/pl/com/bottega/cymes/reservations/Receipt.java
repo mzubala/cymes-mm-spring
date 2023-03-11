@@ -15,11 +15,14 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.EqualsAndHashCode;
+import pl.com.bottega.cymes.reservations.dto.ReceiptDto;
+import pl.com.bottega.cymes.reservations.dto.ReceiptDto.ReceiptLineDto;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -45,6 +48,14 @@ class Receipt {
 
     Money getTotal() {
         return total;
+    }
+
+    UUID getReservationId() {
+        return reservationId;
+    }
+
+    ReceiptDto toDto() {
+        return new ReceiptDto(total.getAmount(), lines.stream().map(ReceiptLine::toDto).collect(Collectors.toList()));
     }
 
     static class Builder {
@@ -87,7 +98,7 @@ class ReceiptLine {
     }
 
     ReceiptLine(Receipt receipt, TicketKind ticketKind, Money singleTicketPrice, Integer count) {
-        this.id = new ReceiptLineId();
+        this.id = new ReceiptLineId(ticketKind, receipt.getReservationId());
         this.singleTicketPrice = singleTicketPrice;
         this.count = count;
         this.receipt = receipt;
@@ -95,6 +106,10 @@ class ReceiptLine {
 
     Money getTotal() {
         return singleTicketPrice.multiply(count);
+    }
+
+    ReceiptLineDto toDto() {
+        return new ReceiptLineDto(id.getTicketKind(), count, singleTicketPrice.getAmount(), getTotal().getAmount());
     }
 }
 
@@ -110,5 +125,9 @@ class ReceiptLineId implements Serializable {
     ReceiptLineId(TicketKind ticketKind, UUID reservationId) {
         this.ticketKind = ticketKind;
         this.reservationId = reservationId;
+    }
+
+    TicketKind getTicketKind() {
+        return ticketKind;
     }
 }

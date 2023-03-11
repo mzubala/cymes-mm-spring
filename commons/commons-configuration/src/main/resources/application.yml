@@ -22,8 +22,9 @@ jwt:
   secret: E(H+MbQeThWmZq4t7w!z%C*F)J@NcRfUjXn2r5u8x/A?D(G+KaPdSgVkYp3s6v9y
   token-expires-after: PT15M
 
-ticket-prices:
-  JUNIOR: 25
-  REGULAR: 40
-  STUDENT: 20
+ticket-prices: '{
+  JUNIOR: 25,
+  REGULAR: 40,
+  STUDENT: 20,
   SENIOR: 30
+}'

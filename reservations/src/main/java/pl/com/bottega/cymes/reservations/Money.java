@@ -1,5 +1,7 @@
 package pl.com.bottega.cymes.reservations;
 
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
 import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 
@@ -9,6 +11,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @Embeddable
 @EqualsAndHashCode
+@Access(AccessType.FIELD)
 class Money {
 
     private BigDecimal amount;
@@ -35,5 +38,9 @@ class Money {
 
     Money multiply(Integer number) {
         return new Money(amount.multiply(new BigDecimal(number)));
+    }
+
+    BigDecimal getAmount() {
+        return amount;
     }
 }

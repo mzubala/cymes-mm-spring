@@ -72,6 +72,3 @@ class Payment {
     }
 }
 
-enum PaymentMethod {
-    ONLINE, ONSITE
-}

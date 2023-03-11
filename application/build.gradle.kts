@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":movies"))
     implementation(project(":show-scheduler"))
     implementation(project(":users"))
+    implementation(project(":reservations"))
     implementation(project(":commons:commons-rest"))
     implementation(project(":commons:commons-configuration"))
     implementation(project(":commons:shared-kernel"))
