@@ -24,6 +24,7 @@ class SimpleReceiptCalculator implements ReceiptCalculator {
     @Override
     public Receipt calculate(Reservation reservation) {
         var receipt = new Receipt.Builder();
+        receipt.withReservation(reservation);
         reservation.getTicketCounts().entrySet().forEach(entry -> {
             receipt.withLine(entry.getKey(), entry.getValue(), new Money(ticketPrices.get(entry.getKey())));
         });

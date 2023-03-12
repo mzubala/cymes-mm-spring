@@ -3,15 +3,19 @@ package pl.com.bottega.cymes.reservations;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.com.bottega.cymes.commons.application.AuthenticationUtils;
+import pl.com.bottega.cymes.reservations.dto.ReservationDto;
 import pl.com.bottega.cymes.reservations.request.CreateReservationRequest;
 import pl.com.bottega.cymes.reservations.request.CreateReservationResponse;
 
 import java.util.HashSet;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/reservations")
@@ -31,4 +35,8 @@ class ReservationsController {
         return new CreateReservationResponse(id);
     }
 
+    @GetMapping("/{reservationId}")
+    ReservationDto getReservation(@PathVariable UUID reservationId) {
+        return reservationService.getReservation(reservationId);
+    }
 }

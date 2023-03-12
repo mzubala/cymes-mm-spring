@@ -8,6 +8,7 @@ dependencies {
     implementation(project(":users"))
     implementation(project(":cinemas"))
     implementation(project(":commons:commons-application"))
+    implementation(project(":commons:commons-rest"))
 
     testImplementation(project(":commons:commons-test"))
 }

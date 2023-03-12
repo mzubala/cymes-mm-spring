@@ -73,6 +73,10 @@ class Receipt {
             return product;
         }
 
+        void withReservation(Reservation reservation) {
+            product.reservation = reservation;
+            product.reservationId = reservation.getId();
+        }
     }
 }
 

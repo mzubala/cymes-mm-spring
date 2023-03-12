@@ -1,5 +1,6 @@
 package pl.com.bottega.cymes;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,31 +34,31 @@ class ReservationsTest {
     }
 
     @Test
+    @SneakyThrows
     void createsAnonymousReservation() {
         // TODO
     }
 
     @Test
+    @SneakyThrows
     void createsNonAnonymousReservation() {
         // TODO
     }
 
     @Test
+    @SneakyThrows
     void cannotCreateReservationForAlreadyReservedSeats() {
         // TODO
     }
 
     @Test
+    @SneakyThrows
     void cannotReserveInvalidSeat() {
         // TODO
     }
 
     @Test
-    void cannotSelectInvalidTicketsKind() {
-        // TODO
-    }
-
-    @Test
+    @SneakyThrows
     void cannotReserveInvalidShow() {
         // TODO
     }

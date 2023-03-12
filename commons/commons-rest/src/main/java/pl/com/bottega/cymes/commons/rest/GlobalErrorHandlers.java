@@ -13,12 +13,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.util.stream.Collectors;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 @ControllerAdvice
 class GlobalErrorHandlers extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     ResponseEntity<GlobalError> handleEntityNotFoundException(EntityNotFoundException ex) {
-        return ResponseEntity.badRequest().body(new GlobalError(ex.getMessage()));
+        return ResponseEntity.status(NOT_FOUND).body(new GlobalError(ex.getMessage()));
     }
 
     @Override
