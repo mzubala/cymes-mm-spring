@@ -6,12 +6,12 @@ import java.util.List;
 
 public class MoviesFacade {
 
-    MovieDto getMovie(Long movieId) {
+    public MovieDto getMovie(Long movieId) {
         // TODO
         return null;
     }
 
-    List<MovieDto> getMovies(Iterable<Long> ids) {
+    public List<MovieDto> getMovies(Iterable<Long> ids) {
         // TODO
         return List.of();
     }
