@@ -1,7 +1,10 @@
 package pl.com.bottega.cymes.commons.rest;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.postgresql.util.PSQLException;
+import org.postgresql.util.PSQLState;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -19,6 +22,16 @@ class GlobalErrorHandlers extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     ResponseEntity<GlobalError> handleEntityNotFoundException(EntityNotFoundException ex) {
         return ResponseEntity.badRequest().body(new GlobalError(ex.getMessage()));
+    }
+
+    @ExceptionHandler(PSQLException.class)
+    ResponseEntity<GlobalError> handlePSQLException(PSQLException ex) throws PSQLException {
+       if(ex.getSQLState().equals(PSQLState.FOREIGN_KEY_VIOLATION.getState())) {
+           return new ResponseEntity<>(new GlobalError(ex.getMessage()), HttpStatus.NOT_FOUND);
+       } else if(ex.getSQLState().equals(PSQLState.UNIQUE_VIOLATION.getState())) {
+           return new ResponseEntity<>(new GlobalError(ex.getMessage()), HttpStatus.CONFLICT);
+       }
+       throw ex;
     }
 
     @Override
