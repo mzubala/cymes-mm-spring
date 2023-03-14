@@ -3,7 +3,8 @@ package pl.com.bottega.cymes.reservations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import pl.com.bottega.cymes.reservations.dto.ReceiptDto;
+import pl.com.bottega.cymes.reservations.dto.AnonymousCustomerInformation;
+import pl.com.bottega.cymes.reservations.dto.RegisteredCustomerInformation;
 import pl.com.bottega.cymes.reservations.dto.ReservationDto;
 import pl.com.bottega.cymes.sharedkernel.ClockProvider;
 
@@ -87,16 +88,6 @@ record StartPaymentCommand(
         if((anonymousCustomerInformation == null) == (registeredCustomerInformation == null)) {
            throw new InvalidReservationParamsException("Reservation is either anonymous or non-anonymous");
         }
-    }
-
-    record AnonymousCustomerInformation(
-        String firstName, String lastName, String email, String phoneNumber
-    ) {
-    }
-
-    record RegisteredCustomerInformation(
-        String phoneNumber
-    ) {
     }
 
 }

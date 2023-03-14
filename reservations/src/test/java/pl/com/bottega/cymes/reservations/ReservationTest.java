@@ -1,8 +1,8 @@
 package pl.com.bottega.cymes.reservations;
 
 import org.junit.jupiter.api.Test;
-import pl.com.bottega.cymes.reservations.StartPaymentCommand.AnonymousCustomerInformation;
-import pl.com.bottega.cymes.reservations.StartPaymentCommand.RegisteredCustomerInformation;
+import pl.com.bottega.cymes.reservations.dto.AnonymousCustomerInformation;
+import pl.com.bottega.cymes.reservations.dto.RegisteredCustomerInformation;
 
 import java.util.Map;
 import java.util.Set;

@@ -16,6 +16,7 @@ import pl.com.bottega.cymes.commons.rest.GlobalError;
 import pl.com.bottega.cymes.reservations.dto.ReservationDto;
 import pl.com.bottega.cymes.reservations.request.CreateReservationRequest;
 import pl.com.bottega.cymes.reservations.request.CreateReservationResponse;
+import pl.com.bottega.cymes.reservations.request.StartPaymentRequest;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -41,6 +42,22 @@ class ReservationsController {
     @GetMapping("/{reservationId}")
     ReservationDto getReservation(@PathVariable UUID reservationId) {
         return reservationService.getReservation(reservationId);
+    }
+
+    @PostMapping("/{reservationId}/payment/online")
+    void startOnlinePayment(@PathVariable UUID reservationId, @RequestBody StartPaymentRequest request) {
+        reservationService.startOnlinePayment(
+            new StartPaymentCommand(reservationId, request.anonymousCustomerInformation(),
+                request.registeredCustomerInformation()
+            ));
+    }
+
+    @PostMapping("/{reservationId}/payment/onsite")
+    void startOnsitePayment(@PathVariable UUID reservationId, @RequestBody StartPaymentRequest request) {
+        reservationService.startOnsitePayment(
+            new StartPaymentCommand(reservationId, request.anonymousCustomerInformation(),
+                request.registeredCustomerInformation()
+            ));
     }
 
     @ExceptionHandler({InvalidReservationParamsException.class, IllegalReservationOperationException.class})

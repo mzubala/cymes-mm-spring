@@ -11,9 +11,11 @@ import pl.com.bottega.cymes.reservations.Seat;
 import pl.com.bottega.cymes.reservations.TicketKind;
 import pl.com.bottega.cymes.reservations.dto.ReceiptDto;
 import pl.com.bottega.cymes.reservations.dto.ReceiptDto.ReceiptLineDto;
+import pl.com.bottega.cymes.reservations.dto.RegisteredCustomerInformation;
 import pl.com.bottega.cymes.reservations.dto.ReservationDto;
 import pl.com.bottega.cymes.reservations.request.CreateReservationRequest;
 import pl.com.bottega.cymes.reservations.request.CreateReservationResponse;
+import pl.com.bottega.cymes.reservations.request.StartPaymentRequest;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -143,8 +145,24 @@ class ReservationsTest {
     @SneakyThrows
     void cannotReserveInvalidShow() {
         reservationsApi.createReservation(
-            new CreateReservationRequest(8000L, Map.of(TicketKind.REGULAR, 2),
+                new CreateReservationRequest(8000L, Map.of(TicketKind.REGULAR, 2), Set.of(new Seat(1, 1), new Seat(1, 2))))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @SneakyThrows
+    void startsOnlinePayment() {
+        // given
+        userFixtures.loginAsCustomer();
+        var reservationId = reservationsApi.createReservation(
+            new CreateReservationRequest(showFixtures.batmanMagnoliaWroclawId, Map.of(TicketKind.REGULAR, 2),
                 Set.of(new Seat(1, 1), new Seat(1, 2))
-            )).andExpect(status().isNotFound());
+            )).getObject(CreateReservationResponse.class).reservationId();
+
+        // when
+        var response = reservationsApi.startOnlinePayment(reservationId, new StartPaymentRequest(null, new RegisteredCustomerInformation("300 300 300")));
+
+        // then
+        response.andExpect(status().is2xxSuccessful());
     }
 }

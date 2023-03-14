@@ -19,8 +19,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import pl.com.bottega.cymes.reservations.StartPaymentCommand.AnonymousCustomerInformation;
-import pl.com.bottega.cymes.reservations.StartPaymentCommand.RegisteredCustomerInformation;
+import pl.com.bottega.cymes.reservations.dto.AnonymousCustomerInformation;
+import pl.com.bottega.cymes.reservations.dto.RegisteredCustomerInformation;
 import pl.com.bottega.cymes.showscheduler.dto.ShowDto;
 
 import java.io.Serializable;

@@ -6,6 +6,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import pl.com.bottega.cymes.reservations.dto.ReservationDto;
 import pl.com.bottega.cymes.reservations.request.CreateReservationRequest;
+import pl.com.bottega.cymes.reservations.request.StartPaymentRequest;
 
 import java.util.UUID;
 
@@ -21,5 +22,9 @@ class ReservationsApi extends Api {
 
     ReservationDto getReservation(UUID reservationId) {
         return getObject("/reservations/{id}", ReservationDto.class, reservationId);
+    }
+
+    ResultActions startOnlinePayment(UUID reservationId, StartPaymentRequest startPaymentRequest) {
+        return post("/reservations/{id}/payment/online", startPaymentRequest, reservationId.toString());
     }
 }

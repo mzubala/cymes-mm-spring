@@ -3,7 +3,7 @@ package pl.com.bottega.cymes.reservations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.com.bottega.cymes.commons.test.FixedClockProvider;
-import pl.com.bottega.cymes.reservations.StartPaymentCommand.AnonymousCustomerInformation;
+import pl.com.bottega.cymes.reservations.dto.AnonymousCustomerInformation;
 import pl.com.bottega.cymes.showscheduler.dto.ShowDto;
 
 import java.util.Map;

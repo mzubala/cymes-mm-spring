@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-                  xmlns:tns="http://www.cleverbuilder.com/BookService/"
+                  xmlns:tns="http://www.payments.com/PaymentsService/"
                   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
                   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                   name="PaymentsService"
@@ -25,6 +25,7 @@
                 <xsd:complexType>
                     <xsd:sequence>
                         <xsd:element name="AssociatedID" type="xsd:string" minOccurs="0"/>
+                        <xsd:element name="Amount" type="xsd:decimal" minOccurs="0"/>
                         <xsd:element ref="tns:Payer" minOccurs="1" maxOccurs="1"/>
                     </xsd:sequence>
                 </xsd:complexType>
@@ -39,8 +40,10 @@
             </xsd:element>
             <xsd:element name="StartPaymentResponse">
                 <xsd:complexType>
-                    <xsd:element name="ID" type="xsd:string" />
-                    <xsd:element name="RedirectURI" type="xsd:string" />
+                    <xsd:sequence>
+                        <xsd:element name="ID" type="xsd:string"/>
+                        <xsd:element name="RedirectURI" type="xsd:string"/>
+                    </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
         </xsd:schema>
@@ -81,7 +84,7 @@
     <wsdl:binding name="PaymentsServiceSOAP" type="tns:PaymentsService">
         <soap:binding style="document"
                       transport="http://schemas.xmlsoap.org/soap/http"/>
-        <wsdl:operation name="GetBook">
+        <wsdl:operation name="StartPayment">
             <soap:operation
                     soapAction="http://www.payments.com/PaymentsService/StartPayment"/>
             <wsdl:input>
@@ -99,7 +102,7 @@
      -->
     <wsdl:service name="PaymentsService">
         <wsdl:port binding="tns:PaymentsServiceSOAP" name="PaymentsServiceSOAP">
-            <soap:address location="http://localhost:9898/PaymentsService"/>
+            <soap:address location="http://localhost:898/PaymentsService"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
