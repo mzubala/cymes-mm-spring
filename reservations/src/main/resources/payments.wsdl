@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:tns="http://www.cleverbuilder.com/BookService/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  name="PaymentsService"
+                  targetNamespace="http://www.payments.com/PaymentsService/">
+    <wsdl:documentation>Definition for a web service called PaymentsService.
+    </wsdl:documentation>
+
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://www.payments.com/PaymentsService/">
+            <xsd:element name="Payer">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ID" type="xsd:string" nillable="true"/>
+                        <xsd:element name="FirstName" type="xsd:string"/>
+                        <xsd:element name="LastName" type="xsd:string"/>
+                        <xsd:element name="Email" type="xsd:string"/>
+                        <xsd:element name="PhoneNumber" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Payment">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="AssociatedID" type="xsd:string" minOccurs="0"/>
+                        <xsd:element ref="tns:Payer" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="StartPayment">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element ref="tns:Payment" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="StartPaymentResponse">
+                <xsd:complexType>
+                    <xsd:element name="ID" type="xsd:string" />
+                    <xsd:element name="RedirectURI" type="xsd:string" />
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+
+
+    <!--
+        A wsdl `message` element is used to define a message
+        exchanged between a web service, consisting of zero
+        or more `part`s.
+     -->
+
+    <wsdl:message name="StartPaymentRequest">
+        <wsdl:part element="tns:StartPayment" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="StartPaymentResponse">
+        <wsdl:part element="tns:StartPaymentResponse" name="parameters"/>
+    </wsdl:message>
+    <!--
+        A WSDL `portType` is used to combine multiple `message`s
+        (e.g. input, output) into a single operation.
+
+        Here we define three synchronous (input/output) operations
+        and the `message`s that must be used for each.
+     -->
+    <wsdl:portType name="PaymentsService">
+        <wsdl:operation name="StartPayment">
+            <wsdl:input message="tns:StartPaymentRequest"/>
+            <wsdl:output message="tns:StartPaymentResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <!--
+        The `binding` element defines exactly how each
+        `operation` will take place over the network.
+        In this case, we are using SOAP.
+     -->
+    <wsdl:binding name="PaymentsServiceSOAP" type="tns:PaymentsService">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="GetBook">
+            <soap:operation
+                    soapAction="http://www.payments.com/PaymentsService/StartPayment"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <!--
+        The `service` element finally says where the service
+        can be accessed from - in other words, its endpoint.
+     -->
+    <wsdl:service name="PaymentsService">
+        <wsdl:port binding="tns:PaymentsServiceSOAP" name="PaymentsServiceSOAP">
+            <soap:address location="http://localhost:9898/PaymentsService"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
