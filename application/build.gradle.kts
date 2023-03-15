@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":commons:commons-rest"))
     implementation(project(":commons:commons-configuration"))
     implementation(project(":commons:shared-kernel"))
+    implementation(project(":commons:commons-application"))
 
     testImplementation(project(":commons:commons-test"))
 }
