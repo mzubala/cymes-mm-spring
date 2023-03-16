@@ -30,10 +30,11 @@ import static com.google.common.base.Preconditions.checkState;
 class Receipt {
 
     @Id
+    @Column(name = "reservation_id")
     private UUID reservationId;
 
     @OneToOne
-    @MapsId("reservationId")
+    @MapsId
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 

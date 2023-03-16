@@ -23,11 +23,5 @@ dependencies {
     implementation(project(":commons:commons-application"))
     implementation(project(":commons:commons-rest"))
 
-    implementation("org.springframework.boot:spring-boot-starter-web-services") {
-        exclude("org.springframework.boot", "spring-boot-starter-tomcat")
-    }
-    implementation("org.springframework.ws:spring-ws-core")
-    implementation("org.glassfish.jaxb:jaxb-runtime")
-
     testImplementation(project(":commons:commons-test"))
 }

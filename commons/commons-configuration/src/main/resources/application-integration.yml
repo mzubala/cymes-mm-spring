@@ -1,3 +1,6 @@
 show-scheduler:
   cinema-hall-cleaning-time: PT5M
   commercials-display-time: PT10M
+
+spring.test.webservice.client.mockserver:
+  enabled: true

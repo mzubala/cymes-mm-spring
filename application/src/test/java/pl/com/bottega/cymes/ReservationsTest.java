@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.com.bottega.cymes.commons.test.IntegrationTest;
 import pl.com.bottega.cymes.reservations.CustomerInformation;
+import pl.com.bottega.cymes.reservations.FakePaymentsFacade;
 import pl.com.bottega.cymes.reservations.ReservationStatus;
 import pl.com.bottega.cymes.reservations.Seat;
 import pl.com.bottega.cymes.reservations.TicketKind;
@@ -42,6 +43,9 @@ class ReservationsTest {
 
     @Autowired
     private UserFixtures userFixtures;
+
+    @Autowired
+    private FakePaymentsFacade paymentsFacade;
 
     @BeforeEach
     void setup() {
@@ -164,5 +168,6 @@ class ReservationsTest {
 
         // then
         response.andExpect(status().is2xxSuccessful());
+        assertThat(paymentsFacade.isPaymentCreatedFor(reservationId, new BigDecimal("80.00"))).isTrue();
     }
 }

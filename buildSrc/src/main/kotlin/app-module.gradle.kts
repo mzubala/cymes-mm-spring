@@ -30,8 +30,14 @@ dependencies {
     annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.1.5.Final")
     implementation("org.postgresql:postgresql")
     implementation("com.google.guava:guava:31.1-jre")
+    implementation("org.springframework.boot:spring-boot-starter-web-services") {
+        exclude("org.springframework.boot", "spring-boot-starter-tomcat")
+    }
+    implementation("org.springframework.ws:spring-ws-core")
+    implementation("org.glassfish.jaxb:jaxb-runtime")
 }
 
 tasks.named<BootJar>("bootJar") {
     enabled = false
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

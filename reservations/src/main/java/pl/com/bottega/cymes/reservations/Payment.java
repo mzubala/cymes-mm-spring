@@ -1,5 +1,6 @@
 package pl.com.bottega.cymes.reservations;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -14,10 +15,11 @@ import java.util.UUID;
 class Payment {
 
     @Id
+    @Column(name = "reservation_id")
     private UUID reservationId;
 
     @OneToOne
-    @MapsId("reservationId")
+    @MapsId
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 

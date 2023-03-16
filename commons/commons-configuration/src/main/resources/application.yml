@@ -28,3 +28,7 @@ ticket-prices: '{
   STUDENT: 20,
   SENIOR: 30
 }'
+
+services:
+  payments:
+    url: http://localhost:9191

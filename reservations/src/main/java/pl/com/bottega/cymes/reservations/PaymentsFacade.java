@@ -1,19 +1,18 @@
 package pl.com.bottega.cymes.reservations;
 
 import com.payments.paymentsservice.Payment;
-import com.payments.paymentsservice.PaymentsService;
-import com.payments.paymentsservice.PaymentsService_Service;
 import com.payments.paymentsservice.StartPayment;
 import com.payments.paymentsservice.StartPaymentResponse;
 import lombok.SneakyThrows;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import org.springframework.stereotype.Component;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
 import java.net.URI;
-import java.net.URL;
 import java.util.UUID;
 
 interface PaymentsFacade {
@@ -42,6 +41,7 @@ class ExternalPaymentGatewayFacade extends WebServiceGatewaySupport implements P
 }
 
 @Configuration
+@EnableConfigurationProperties({PaymentsConfiguration.class})
 class WSConfig {
 
     @Bean
@@ -52,9 +52,10 @@ class WSConfig {
     }
 
     @Bean
-    ExternalPaymentGatewayFacade externalPaymentGatewayFacade(Jaxb2Marshaller jaxb2Marshaller) {
+    @Profile({"!integration"})
+    ExternalPaymentGatewayFacade externalPaymentGatewayFacade(Jaxb2Marshaller jaxb2Marshaller, PaymentsConfiguration paymentsConfiguration) {
         var facade = new ExternalPaymentGatewayFacade();
-        facade.setDefaultUri("http://localhost:9191");
+        facade.setDefaultUri(paymentsConfiguration.url());
         facade.setMarshaller(jaxb2Marshaller);
         facade.setUnmarshaller(jaxb2Marshaller);
         return facade;
@@ -62,4 +63,8 @@ class WSConfig {
 
 }
 
+@ConfigurationProperties(prefix = "services.payments")
+record PaymentsConfiguration(String url) {
+
+}
 
