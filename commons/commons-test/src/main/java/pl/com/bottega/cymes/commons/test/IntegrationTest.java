@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ExtendWith(PostgresDBExtension.class)
+@ExtendWith({PostgresDBExtension.class, RabbitMqExtensions.class})
 @SpringBootTest
 @AutoConfigureMockMvc
 @ContextConfiguration

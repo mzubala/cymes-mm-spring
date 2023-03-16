@@ -13,6 +13,8 @@ spring:
     properties:
       hibernate:
         globally_quoted_identifiers: true
+  rabbitmq:
+    host: rabbitmq
 
 show-scheduler:
   cinema-hall-cleaning-time: PT30M
@@ -32,3 +34,12 @@ ticket-prices: '{
 services:
   payments:
     url: http://localhost:9191
+
+events:
+  topics:
+    - name: pl.com.bottega.cymes.showscheduler.events.ShowCancelled
+      listeners:
+        - name: pl.com.bottega.cymes.reservations.ShowCancelledHandler
+    - name: pl.com.bottega.cymes.reservations.events.ReservationStatusChanged
+      listeners:
+        - name: pl.com.bottega.cymes.notifications.ReservationsNotifier
