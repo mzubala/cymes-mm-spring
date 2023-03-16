@@ -9,4 +9,5 @@ dependencies {
     api("org.springframework.boot:spring-boot-starter-test")
     implementation(project(":commons:shared-kernel"))
     implementation("org.testcontainers:postgresql:1.17.6")
+    implementation("org.testcontainers:rabbitmq:1.17.6")
 }
