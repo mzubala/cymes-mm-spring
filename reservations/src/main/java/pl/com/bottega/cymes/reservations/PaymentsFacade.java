@@ -28,15 +28,8 @@ class ExternalPaymentGatewayFacade extends WebServiceGatewaySupport implements P
     @Override
     @SneakyThrows
     public StartedPayment startPayment(UUID reservationId, Money amount) {
-        var request = new StartPayment();
-        var payment = new Payment();
-        payment.setAssociatedID(reservationId.toString());
-        payment.setAmount(amount.getAmount());
-        request.setPayment(payment);
-        var response = (StartPaymentResponse) getWebServiceTemplate().marshalSendAndReceive(
-            request
-        );
-        return new StartedPayment(response.getID(), new URI(response.getRedirectURI()));
+        // TODO
+        return null;
     }
 }
 

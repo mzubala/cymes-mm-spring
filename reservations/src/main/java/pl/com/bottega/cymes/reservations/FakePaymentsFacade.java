@@ -19,18 +19,13 @@ public class FakePaymentsFacade implements PaymentsFacade {
     @Override
     @SneakyThrows
     public StartedPayment startPayment(UUID reservationId, Money amount) {
-        var startedPayment = new StartedPaymentWrapper(
-            new StartedPayment(UUID.randomUUID().toString(), new URI("http://payments.com/" + reservationId)),
-            reservationId, amount
-        );
-        startedPayments.add(startedPayment);
-        return startedPayment.payment;
+        // TODO
+        return null;
     }
 
     public boolean isPaymentCreatedFor(UUID reservationId, BigDecimal amount) {
-        var moneyAmount = new Money(amount);
-        return startedPayments.stream()
-            .anyMatch((p) -> p.reservationId.equals(reservationId) && p.amount.equals(moneyAmount));
+        // TODO
+        return false;
     }
 
     private record StartedPaymentWrapper(StartedPayment payment, UUID reservationId, Money amount) {
