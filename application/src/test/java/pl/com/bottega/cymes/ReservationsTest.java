@@ -155,7 +155,7 @@ class ReservationsTest {
 
     @Test
     @SneakyThrows
-    void startsOnlinePayment() {
+    void startsOnlinePaymentForNonAnonymousCustomer() {
         // given
         userFixtures.loginAsCustomer();
         var reservationId = reservationsApi.createReservation(

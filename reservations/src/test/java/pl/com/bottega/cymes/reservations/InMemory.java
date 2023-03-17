@@ -3,6 +3,7 @@ package pl.com.bottega.cymes.reservations;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.SneakyThrows;
+import pl.com.bottega.cymes.reservations.dto.AnonymousCustomerInformation;
 import pl.com.bottega.cymes.showscheduler.dto.ShowDto;
 
 import java.net.URI;
@@ -68,12 +69,22 @@ class FakePaymentFacade implements PaymentsFacade {
     private StartedPayment lastStartedPayment;
     private Money lastStartedPaymentAmount;
 
+    private AnonymousCustomerInformation lastAnonymousCustomerInformation;
+
     @SneakyThrows
     @Override
     public StartedPayment startPayment(UUID reservationId, Money amount) {
         lastStartedPayment = new StartedPayment(UUID.randomUUID().toString(), new URI("http://test.com"));
         lastStartedPaymentAmount = amount;
         return lastStartedPayment;
+    }
+
+    @Override
+    public StartedPayment startPayment(
+        UUID reservationId, AnonymousCustomerInformation anonymousCustomerInformation, Money amount
+    ) {
+        lastAnonymousCustomerInformation = anonymousCustomerInformation;
+        return startPayment(reservationId, amount);
     }
 
     StartedPayment getLastStartedPayment() {

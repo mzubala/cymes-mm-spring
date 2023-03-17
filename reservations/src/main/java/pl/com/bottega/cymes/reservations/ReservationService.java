@@ -34,9 +34,8 @@ class ReservationService {
         cinemaHall.ensureValidSeats(createReservationCommand.seats());
         if (createReservationCommand.userId() != null) {
             var customerInformation = customerInformationProvider.getByUserId(createReservationCommand.userId());
-            reservation = new Reservation(
-                show, customerInformation, createReservationCommand.ticketCounts(), createReservationCommand.seats(),
-                receiptCalculator
+            reservation = new Reservation(show, customerInformation, createReservationCommand.ticketCounts(),
+                createReservationCommand.seats(), receiptCalculator
             );
         }
         else {
@@ -49,8 +48,16 @@ class ReservationService {
 
     StartedPayment startOnlinePayment(StartPaymentCommand command) {
         var reservation = reservationRepository.getReferenceById(command.reservationId());
-        var startedPayment = paymentsFacade.startPayment(reservation.getId(), reservation.getReceipt().getTotal());
-        reservation.startOnlinePayment(startedPayment.id(), command.anonymousCustomerInformation(), command.registeredCustomerInformation());
+        StartedPayment startedPayment;
+        if (reservation.isAnonymous()) {
+            startedPayment = paymentsFacade.startPayment(reservation.getId(), reservation.getReceipt().getTotal());
+        }
+        else {
+            startedPayment = paymentsFacade.startPayment(
+                reservation.getId(), command.anonymousCustomerInformation(), reservation.getReceipt().getTotal());
+        }
+        reservation.startOnlinePayment(
+            startedPayment.id(), command.anonymousCustomerInformation(), command.registeredCustomerInformation());
         reservationRepository.save(reservation);
         return startedPayment;
     }
@@ -66,9 +73,9 @@ class ReservationService {
     ReservationDto getReservation(UUID id) {
         var reservation = reservationRepository.getReferenceById(id);
         var showDto = showProvider.getShow(reservation.getShowId());
-        return new ReservationDto(
-            id, reservation.getShowId(), showDto.cinemaId(), showDto.cinemaHallId(), reservation.getStatus(), reservation.getTicketCounts(),
-            reservation.getSeats(), reservation.getReceipt().toDto(), reservation.getCustomerInfromation()
+        return new ReservationDto(id, reservation.getShowId(), showDto.cinemaId(), showDto.cinemaHallId(),
+            reservation.getStatus(), reservation.getTicketCounts(), reservation.getSeats(),
+            reservation.getReceipt().toDto(), reservation.getCustomerInfromation()
         );
     }
 }
@@ -85,8 +92,8 @@ record StartPaymentCommand(
 ) {
 
     StartPaymentCommand {
-        if((anonymousCustomerInformation == null) == (registeredCustomerInformation == null)) {
-           throw new InvalidReservationParamsException("Reservation is either anonymous or non-anonymous");
+        if ((anonymousCustomerInformation == null) == (registeredCustomerInformation == null)) {
+            throw new InvalidReservationParamsException("Reservation is either anonymous or non-anonymous");
         }
     }
 

@@ -3,6 +3,7 @@ package pl.com.bottega.cymes.reservations;
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import pl.com.bottega.cymes.reservations.dto.AnonymousCustomerInformation;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -21,7 +22,20 @@ public class FakePaymentsFacade implements PaymentsFacade {
     public StartedPayment startPayment(UUID reservationId, Money amount) {
         var startedPayment = new StartedPaymentWrapper(
             new StartedPayment(UUID.randomUUID().toString(), new URI("http://payments.com/" + reservationId)),
-            reservationId, amount
+            reservationId, amount, null
+        );
+        startedPayments.add(startedPayment);
+        return startedPayment.payment;
+    }
+
+    @Override
+    @SneakyThrows
+    public StartedPayment startPayment(
+        UUID reservationId, AnonymousCustomerInformation anonymousCustomerInformation, Money amount
+    ) {
+        var startedPayment = new StartedPaymentWrapper(
+            new StartedPayment(UUID.randomUUID().toString(), new URI("http://payments.com/" + reservationId)),
+            reservationId, amount, anonymousCustomerInformation
         );
         startedPayments.add(startedPayment);
         return startedPayment.payment;
@@ -30,9 +44,9 @@ public class FakePaymentsFacade implements PaymentsFacade {
     public boolean isPaymentCreatedFor(UUID reservationId, BigDecimal amount) {
         var moneyAmount = new Money(amount);
         return startedPayments.stream()
-            .anyMatch((p) -> p.reservationId.equals(reservationId) && p.amount.equals(moneyAmount));
+            .anyMatch((p) -> p.reservationId.equals(reservationId) && p.amount.equals(moneyAmount) && p.anonymousCustomerInformation() == null);
     }
 
-    private record StartedPaymentWrapper(StartedPayment payment, UUID reservationId, Money amount) {
+    private record StartedPaymentWrapper(StartedPayment payment, UUID reservationId, Money amount, AnonymousCustomerInformation anonymousCustomerInformation) {
     }
 }

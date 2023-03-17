@@ -162,6 +162,10 @@ class Reservation {
         status = WAITING_ONSITE_PAYMENT;
     }
 
+    boolean isAnonymous() {
+        return customerInformation == null || customerInformation.isAnonymous();
+    }
+
     private void updateCustomerInformation(
         AnonymousCustomerInformation anonymousCustomerInformation,
         RegisteredCustomerInformation registeredCustomerInformation
@@ -209,10 +213,6 @@ class Reservation {
             throw new IllegalReservationOperationException(
                 "Reservation status is illegal to perform desired operation " + requiredStatus);
         }
-    }
-
-    private boolean isAnonymous() {
-        return customerInformation.isAnonymous();
     }
 
     @Entity
