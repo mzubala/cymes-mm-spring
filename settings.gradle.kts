@@ -20,5 +20,6 @@ findProject(":commons:shared-kernel")?.name = "shared-kernel"
 include("commons:commons-configuration")
 findProject(":commons:commons-configuration")?.name = "commons-configuration"
 include("users")
+include("notifications")
 include("commons:commons-events")
 findProject(":commons:commons-events")?.name = "commons-events"

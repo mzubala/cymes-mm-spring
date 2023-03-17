@@ -1,0 +1,15 @@
+POST http://localhost:8080/reservations
+Content-Type: application/json
+
+{
+  "showId": 2,
+  "ticketCounts": {
+    "REGULAR": 1
+  },
+  "seats": [
+    {
+      "rowNumber": 1,
+      "seatNumber": 2
+    }
+  ]
+}

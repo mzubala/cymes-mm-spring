@@ -1,10 +1,14 @@
 POST http://localhost:8080/shows
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJqdGkiOiIxIiwicm9sZXMiOlsiQURNSU4iXSwiaWF0IjoxNjc4MDIxOTIwLCJleHAiOjE2NzgwMjI4MjB9.gg6DBVoBLhjdnA_oYzxziZbbpk9G27hs1yFCFI2BVmpo-vfDvQlcWashD1yAJOd8Ml5_qQPAReKp6zh8OsSeLA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJqdGkiOiIxIiwicm9sZXMiOlsiQURNSU4iXSwiaWF0IjoxNjc5MDU5NzAwLCJleHAiOjE2NzkwNjA2MDB9.J-NnYD7aBTq8NwqmiIo6WgWdOs2Nm3g8ecqiHlPo3zxHifuZP07vw30VdLD0oo5ARi_Lfq4ityv6Zx5txOiipA
 
 {
   "movieId": 1,
   "cinemaId": 1,
   "cinemaHallId": 1,
-  "when": "2023-03-20T10:00:00Z"
+  "when": "2023-03-21T10:00:00Z"
 }
+
+###
+
+GET http://localhost:8080/shows?cinemaId=1&when=2023-03-21

@@ -2,6 +2,7 @@ package pl.com.bottega.cymes.reservations;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.com.bottega.cymes.commons.test.FakeEventPublisher;
 import pl.com.bottega.cymes.commons.test.FixedClockProvider;
 import pl.com.bottega.cymes.reservations.dto.AnonymousCustomerInformation;
 import pl.com.bottega.cymes.showscheduler.dto.ShowDto;
@@ -34,8 +35,11 @@ class ReservationsModuleTest {
 
     private final FakePaymentFacade fakePaymentFacade = new FakePaymentFacade();
 
+    private final FakeEventPublisher fakeEventPublisher = new FakeEventPublisher();
+
     private final ReservationService reservationService = new ReservationService(reservationRepository, showProvider,
-        customerInformationProvider, cinemaHallProvider, clockProvider, defaultReceiptCalculator(), fakePaymentFacade
+        customerInformationProvider, cinemaHallProvider, clockProvider, defaultReceiptCalculator(), fakePaymentFacade,
+        fakeEventPublisher
     );
 
     private ShowDto show = aShowDto().build();
@@ -122,7 +126,8 @@ class ReservationsModuleTest {
         var savedReservation = reservationRepository.getReferenceById(reservationId);
         assertThat(savedReservation.getStatus()).isEqualTo(WAITING_ONLINE_PAYMENT);
         assertThat(savedReservation.getPayment().getMethod()).isEqualTo(PaymentMethod.ONLINE);
-        assertThat(savedReservation.getPayment().getExternalId()).isEqualTo(fakePaymentFacade.getLastStartedPayment().id());
+        assertThat(savedReservation.getPayment().getExternalId()).isEqualTo(
+            fakePaymentFacade.getLastStartedPayment().id());
         assertThat(savedReservation.getCustomerInfromation()).isEqualTo(
             new CustomerInformation(null, "John", "Doe", "600 000 000", "john@test.com"));
         assertThat(startedPayment).isEqualTo(fakePaymentFacade.getLastStartedPayment());

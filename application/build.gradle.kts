@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":commons:commons-configuration"))
     implementation(project(":commons:shared-kernel"))
     implementation(project(":commons:commons-events"))
+    implementation(project(":notifications"))
 
     testImplementation(project(":commons:commons-test"))
 }

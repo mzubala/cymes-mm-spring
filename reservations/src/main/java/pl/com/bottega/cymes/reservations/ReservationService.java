@@ -6,7 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.com.bottega.cymes.reservations.dto.AnonymousCustomerInformation;
 import pl.com.bottega.cymes.reservations.dto.RegisteredCustomerInformation;
 import pl.com.bottega.cymes.reservations.dto.ReservationDto;
+import pl.com.bottega.cymes.reservations.events.ReservationStatusChanged;
 import pl.com.bottega.cymes.sharedkernel.ClockProvider;
+import pl.com.bottega.cymes.sharedkernel.EventsPublisher;
 
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +28,8 @@ class ReservationService {
 
     private final PaymentsFacade paymentsFacade;
 
+    private final EventsPublisher eventsPublisher;
+
     @Transactional
     UUID createReservation(CreateReservationCommand createReservationCommand) {
         Reservation reservation;
@@ -44,22 +48,27 @@ class ReservationService {
                 show, createReservationCommand.ticketCounts(), createReservationCommand.seats(), receiptCalculator);
         }
         reservationRepository.save(reservation);
+        eventsPublisher.publish(new ReservationStatusChanged(reservation.getId(), null, reservation.getStatus()));
         return reservation.getId();
     }
 
     StartedPayment startOnlinePayment(StartPaymentCommand command) {
         var reservation = reservationRepository.getReferenceById(command.reservationId());
+        var initialStatus = reservation.getStatus();
         var startedPayment = paymentsFacade.startPayment(reservation.getId(), reservation.getReceipt().getTotal());
         reservation.startOnlinePayment(startedPayment.id(), command.anonymousCustomerInformation(), command.registeredCustomerInformation());
         reservationRepository.save(reservation);
+        eventsPublisher.publish(new ReservationStatusChanged(reservation.getId(), initialStatus, reservation.getStatus()));
         return startedPayment;
     }
 
     @Transactional
     void startOnsitePayment(StartPaymentCommand command) {
         var reservation = reservationRepository.getReferenceById(command.reservationId());
+        var initialStatus = reservation.getStatus();
         reservation.startOnsitePayment(command.anonymousCustomerInformation(), command.registeredCustomerInformation());
         reservationRepository.save(reservation);
+        eventsPublisher.publish(new ReservationStatusChanged(reservation.getId(), initialStatus, reservation.getStatus()));
     }
 
     @Transactional(readOnly = true)
