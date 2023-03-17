@@ -73,10 +73,16 @@ class ShowsService {
             Collectors.groupingBy(Show::getMovieId));
         var moviesMap = moviesFacade.getMovies(showMap.keySet()).stream().collect(
             Collectors.toMap(MovieDto::id, Function.identity()));
-        return showMap.entrySet().stream().map(entry -> {
+        var result = showMap.entrySet().stream().map(entry -> {
             var movie = moviesMap.get(entry.getKey());
             return new ShowsGroupDto(toMovieDto(movie), toShowDtos(entry.getValue()));
         }).collect(toList());
+        result.sort(this::compareGroups);
+        return result;
+    }
+
+    private int compareGroups(ShowsGroupDto showsGroupDto, ShowsGroupDto showsGroupDto1) {
+        return showsGroupDto.movie().title().compareTo(showsGroupDto1.movie().title());
     }
 
     private static List<ShowDto> toShowDtos(List<Show> shows) {

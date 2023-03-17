@@ -21,7 +21,9 @@ import java.util.UUID;
 interface PaymentsFacade {
     StartedPayment startPayment(UUID reservationId, Money amount);
 
-    StartedPayment startPayment(UUID reservationId, AnonymousCustomerInformation anonymousCustomerInformation, Money amount);
+    StartedPayment startPayment(
+        UUID reservationId, AnonymousCustomerInformation anonymousCustomerInformation, Money amount
+    );
 }
 
 record StartedPayment(String id, URI redirectUri) {
@@ -49,9 +51,7 @@ class ExternalPaymentGatewayFacade extends WebServiceGatewaySupport implements P
         payer.setFirstName(customerInfo.firstName());
         payer.setLastName(customerInfo.lastName());
         payment.setPayer(payer);
-        var response = (StartPaymentResponse) getWebServiceTemplate().marshalSendAndReceive(
-            request
-        );
+        var response = (StartPaymentResponse) getWebServiceTemplate().marshalSendAndReceive(request);
         return new StartedPayment(response.getID(), new URI(response.getRedirectURI()));
     }
 
@@ -72,9 +72,7 @@ class ExternalPaymentGatewayFacade extends WebServiceGatewaySupport implements P
         payer.setLastName(anonymousCustomerInformation.lastName());
         payer.setPhoneNumber(anonymousCustomerInformation.phoneNumber());
         payment.setPayer(payer);
-        var response = (StartPaymentResponse) getWebServiceTemplate().marshalSendAndReceive(
-            request
-        );
+        var response = (StartPaymentResponse) getWebServiceTemplate().marshalSendAndReceive(request);
         return new StartedPayment(response.getID(), new URI(response.getRedirectURI()));
     }
 }
@@ -92,7 +90,10 @@ class WSConfig {
 
     @Bean
     @Profile({"!integration"})
-    ExternalPaymentGatewayFacade externalPaymentGatewayFacade(Jaxb2Marshaller jaxb2Marshaller, PaymentsConfiguration paymentsConfiguration, ReservationRepository reservationRepository) {
+    ExternalPaymentGatewayFacade externalPaymentGatewayFacade(
+        Jaxb2Marshaller jaxb2Marshaller, PaymentsConfiguration paymentsConfiguration,
+        ReservationRepository reservationRepository
+    ) {
         var facade = new ExternalPaymentGatewayFacade(reservationRepository);
         facade.setDefaultUri(paymentsConfiguration.url());
         facade.setMarshaller(jaxb2Marshaller);

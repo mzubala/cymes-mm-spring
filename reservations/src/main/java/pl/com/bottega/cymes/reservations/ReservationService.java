@@ -50,11 +50,11 @@ class ReservationService {
         var reservation = reservationRepository.getReferenceById(command.reservationId());
         StartedPayment startedPayment;
         if (reservation.isAnonymous()) {
-            startedPayment = paymentsFacade.startPayment(reservation.getId(), reservation.getReceipt().getTotal());
-        }
-        else {
             startedPayment = paymentsFacade.startPayment(
                 reservation.getId(), command.anonymousCustomerInformation(), reservation.getReceipt().getTotal());
+        }
+        else {
+            startedPayment = paymentsFacade.startPayment(reservation.getId(), reservation.getReceipt().getTotal());
         }
         reservation.startOnlinePayment(
             startedPayment.id(), command.anonymousCustomerInformation(), command.registeredCustomerInformation());
