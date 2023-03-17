@@ -10,6 +10,7 @@ import pl.com.bottega.cymes.reservations.FakePaymentsFacade;
 import pl.com.bottega.cymes.reservations.ReservationStatus;
 import pl.com.bottega.cymes.reservations.Seat;
 import pl.com.bottega.cymes.reservations.TicketKind;
+import pl.com.bottega.cymes.reservations.dto.AnonymousCustomerInformation;
 import pl.com.bottega.cymes.reservations.dto.ReceiptDto;
 import pl.com.bottega.cymes.reservations.dto.ReceiptDto.ReceiptLineDto;
 import pl.com.bottega.cymes.reservations.dto.RegisteredCustomerInformation;
@@ -169,5 +170,24 @@ class ReservationsTest {
         // then
         response.andExpect(status().is2xxSuccessful());
         assertThat(paymentsFacade.isPaymentCreatedFor(reservationId, new BigDecimal("80.00"))).isTrue();
+    }
+
+    @Test
+    @SneakyThrows
+    void startsOnlinePaymentForAnonymousCustomer() {
+        // given
+        reservationsApi.logOut();
+        var reservationId = reservationsApi.createReservation(
+            new CreateReservationRequest(showFixtures.batmanMagnoliaWroclawId, Map.of(TicketKind.REGULAR, 2),
+                Set.of(new Seat(1, 1), new Seat(1, 2))
+            )).getObject(CreateReservationResponse.class).reservationId();
+        var customerInfo = new AnonymousCustomerInformation("John", "Doe", "john@test.com", "300 300 300");
+
+        // when
+        var response = reservationsApi.startOnlinePayment(reservationId, new StartPaymentRequest(customerInfo, null));
+
+        // then
+        response.andExpect(status().is2xxSuccessful());
+        assertThat(paymentsFacade.isPaymentCreatedFor(reservationId, new BigDecimal("80.00"), customerInfo)).isTrue();
     }
 }

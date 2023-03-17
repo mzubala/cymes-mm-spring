@@ -43,10 +43,20 @@ public class FakePaymentsFacade implements PaymentsFacade {
 
     public boolean isPaymentCreatedFor(UUID reservationId, BigDecimal amount) {
         var moneyAmount = new Money(amount);
-        return startedPayments.stream()
-            .anyMatch((p) -> p.reservationId.equals(reservationId) && p.amount.equals(moneyAmount) && p.anonymousCustomerInformation() == null);
+        return startedPayments.stream().anyMatch(
+            (p) -> p.reservationId.equals(reservationId) && p.amount.equals(moneyAmount)
+                && p.anonymousCustomerInformation() == null);
     }
 
-    private record StartedPaymentWrapper(StartedPayment payment, UUID reservationId, Money amount, AnonymousCustomerInformation anonymousCustomerInformation) {
+    public boolean isPaymentCreatedFor(UUID reservationId, BigDecimal amount, AnonymousCustomerInformation customerInfo) {
+        var moneyAmount = new Money(amount);
+        return startedPayments.stream().anyMatch(
+            (p) -> p.reservationId.equals(reservationId) && p.amount.equals(moneyAmount) && customerInfo.equals(p.anonymousCustomerInformation));
+    }
+
+    private record StartedPaymentWrapper(
+        StartedPayment payment, UUID reservationId, Money amount,
+        AnonymousCustomerInformation anonymousCustomerInformation
+    ) {
     }
 }
