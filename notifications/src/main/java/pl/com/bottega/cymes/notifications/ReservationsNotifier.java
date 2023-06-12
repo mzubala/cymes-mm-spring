@@ -2,10 +2,12 @@ package pl.com.bottega.cymes.notifications;
 
 import lombok.extern.java.Log;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
+import pl.com.bottega.cymes.commons.events.ListenerComponent;
 import pl.com.bottega.cymes.reservations.events.ReservationStatusChanged;
 
-@Component
+@ListenerComponent
 @Log
 class ReservationsNotifier {
 

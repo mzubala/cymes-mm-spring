@@ -7,7 +7,8 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.context.event.ApplicationStartingEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import pl.com.bottega.cymes.commons.events.EventsProperties.ListenerProperties;
@@ -18,14 +19,18 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 @Log
-class RabbitMQInfrastructureInitializer {
+class RabbitMQInfrastructureInitializer implements InitializingBean {
 
     private final AmqpAdmin amqpAdmin;
 
     private final EventsProperties eventsProperties;
 
-    @EventListener(ApplicationStartedEvent.class)
-    public void createRabbitMqInfrastructure() {
+    @Override
+    public void afterPropertiesSet() {
+        createRabbitMqInfrastructure();
+    }
+
+    private void createRabbitMqInfrastructure() {
         log.info("Creating RabbitMQ infrastructure");
         eventsProperties.topics().forEach(this::createTopic);
     }
@@ -49,5 +54,4 @@ class RabbitMQInfrastructureInitializer {
         amqpAdmin.declareQueue(dlq);
         amqpAdmin.declareBinding(BindingBuilder.bind(dlq).to(dlxExchange).withQueueName());
     }
-
 }
