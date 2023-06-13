@@ -7,6 +7,7 @@ import pl.com.bottega.cymes.sharedkernel.ClockProvider;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 
 @Primary
 @Component
@@ -15,7 +16,7 @@ public class FixedClockProvider implements ClockProvider {
     private Clock clock;
 
     public FixedClockProvider() {
-        fixAt(Instant.now());
+        fixAt(Instant.now().truncatedTo(ChronoUnit.SECONDS));
     }
 
     @Override
