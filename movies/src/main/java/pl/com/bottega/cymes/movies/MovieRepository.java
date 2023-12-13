@@ -16,7 +16,7 @@ import static pl.com.bottega.cymes.movies.Movie_.DIRECTOR;
 import static pl.com.bottega.cymes.movies.Movie_.GENRES;
 
 interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecificationExecutor<Movie> {
-    @EntityGraph(attributePaths = {ACTORS, GENRES, DIRECTOR})
+    @EntityGraph(attributePaths = {ACTORS, GENRES, DIRECTOR}, type = EntityGraph.EntityGraphType.LOAD)
     Page<Movie> findAll(@Nullable Specification<Movie> spec, Pageable pageable);
 
     <T> Optional<T> findById(Long movieId, Class<T> projection);

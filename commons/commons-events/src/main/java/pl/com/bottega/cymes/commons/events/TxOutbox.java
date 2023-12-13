@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -58,6 +59,7 @@ class OutboxSender {
     private final ClockProvider clockProvider;
 
     @TransactionalEventListener
+    @Async
     public void sendOutgoingEvent(OutgoingEvent event) {
         rabbitTemplate.convertAndSend(event.getDestination(), null, event.getPayload());
         repository.deleteById(event.getId());
